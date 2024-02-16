@@ -7,6 +7,7 @@ const UserController = require('../controllers/user.controller');
 require('dotenv').config({ path: './configuration.env' });
 
 router.post('/login', (req, res) => {
+  console.log(req.body)
   dbConn.query(
     `SELECT * FROM user WHERE username = ${dbConn.escape(req.body.username)} and password = ${dbConn.escape(req.body.password)};`,
     (err, result) => {
