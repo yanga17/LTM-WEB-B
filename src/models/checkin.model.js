@@ -47,13 +47,7 @@ Checkin.InsertCheckin = (req, result) => {
         } else {
             result(null, res)
         }
-        dbConn.end((error) => {
-            if (error) {
-                console.error('Error closing MySQL connection:', error);
-                return;
-            }
-            console.log('MySQL connection closed.');
-        });
+        dbConn.end()
     })
 }
 
