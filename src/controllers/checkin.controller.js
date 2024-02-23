@@ -1,6 +1,6 @@
 const CheckinModel = require('../models/checkin.model');
 
-exports.getCheckins = (res) => {
+exports.getCheckins = (req, res) => {
   CheckinModel.getCheckins((err, user) => {
     if (err) {
       user.message = "Failed";
