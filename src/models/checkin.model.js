@@ -28,14 +28,7 @@ Checkin.getCheckins = (result) => {
         } else {
             result(null, res);
         }
-        dbConn.end((error) => {
-            if (error) {
-                console.error('Error closing MySQL connection:', error);
-                return;
-            }
-            console.log('MySQL connection closed.');
-        });
-
+        dbConn.end();
     })
 }
 
@@ -47,7 +40,7 @@ Checkin.InsertCheckin = (req, result) => {
         } else {
             result(null, res)
         }
-        dbConn.end()
+        dbConn.end();
     })
 }
 
@@ -60,13 +53,7 @@ Checkin.UpdateCheckin = (req, result) => {
             console.log("client updated successfully");
             result(null, res);
         }
-        dbConn.end((error) => {
-            if (error) {
-                console.error('Error closing MySQL connection:', error);
-                return;
-            }
-            console.log('MySQL connection closed.');
-        });
+        dbConn.end();
     });
 }
 
