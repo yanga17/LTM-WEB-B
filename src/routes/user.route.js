@@ -31,7 +31,8 @@ router.post('/login', (req, res) => {
           emp_id: result[0].emp_id,
           emp_name: result[0].emp_name,
           emp_surname: result[0].emp_surname,
-          id_no: result[0].id_no
+          id_no: result[0].id_no,
+          role: result[0].role 
         });
       }
 
