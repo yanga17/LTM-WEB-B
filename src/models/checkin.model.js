@@ -41,7 +41,7 @@ Checkin.InsertCheckin = (req, result) => {
             count = res[0].count
 
             if (count > 0) {
-                dbConn.query('UPDATE checkin SET checkin_time = ? WHERE checkin_time >= CURDATE() AND checkin_time < CURDATE() + INTERVAL 1 DAY AND emp_id = ?', [req.body.checkin_time, req.body.emp_id], (err, res) => {
+                dbConn.query('UPDATE checkin SET checkin_time = ?, checkin_status = 0, ischecked = 0 WHERE checkin_time >= CURDATE() AND checkin_time < CURDATE() + INTERVAL 1 DAY AND emp_id = ?', [req.body.checkin_time, req.body.emp_id], (err, res) => {
                     if (!(err === null)) {
                         console.log('Error while inserting data1: ' + err);
                         result(null, err);
