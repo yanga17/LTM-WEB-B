@@ -85,7 +85,7 @@ Checkin.InsertCheckin = (req, result) => {
 }
 
 Checkin.UpdateCheckin = (req, result) => {
-    dbConn.query('Update checkin set checkin_status = ?, ischecked = ? where uid = ?', [req.params.checkin_status, req.params.ischecked, req.params.uid], (err, res) => {
+    dbConn.query('Update checkin set checkin_status = ?, ischecked = 1 where uid = ?', [req.params.checkin_status, req.params.uid], (err, res) => {
         if (err) {
             console.log('Error while updating the client: ' + err);
             result(null, err);
