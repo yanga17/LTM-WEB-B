@@ -1,24 +1,24 @@
 var dbConn = require("../../config/db.config");
 
 var User = function (user) {
-    this.uid = user.uid;
-    this.name = user.name;
-    this.surname = user.surname;
-    this.email_address = user.email_address;
-    this.username = user.username;
-    this.password = user.password;
-    this.profile_photo = user.profile_photo;
-    this.enabled = user.enabled;
-
-    this.first_date = user.first_date;
-    this.second_date = user.second_date;
-
-    //Foreign Keys
-    this.access_control_uid = user.access_control_uid;
-
     this.emp_id = user.emp_id;
-
+    this.emp_name = user.emp_name;
+    this.action = user.action;
+    this.date_time = user.date_time;
 };
+
+User.InsertAuditLog = (req, result) => {
+    dbConn.query('INSERT INTO audit_log SET ?', req.body, (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while inserting data: ' + err);
+            result(null, err);
+            // dbConn.end();
+        } else {
+            result(null, res);
+            // dbConn.end();
+        }
+    })
+}
 
 module.exports = User;
 

@@ -6,6 +6,8 @@ const UserController = require('../controllers/user.controller');
 
 require('dotenv').config({ path: './configuration.env' });
 
+router.post('/insertauditlog', UserController.InsertAuditLog);
+
 router.post('/login', (req, res) => {
   console.log(req.body)
   dbConn.query(

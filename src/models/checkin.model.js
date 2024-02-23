@@ -28,24 +28,64 @@ Checkin.getCheckins = (result) => {
         } else {
             result(null, res);
         }
-        dbConn.end();
+        //dbConn.end();
     })
 }
 
 Checkin.InsertCheckin = (req, result) => {
-    dbConn.query('INSERT INTO checkin SET ? ', req.body, (err, res) => {
+    let count;
+    dbConn.query('SELECT COUNT(*) as count FROM checkin WHERE checkin_time >= CURDATE() AND checkin_time < CURDATE() + INTERVAL 1 DAY AND emp_id = ?', req.body.emp_id, (err, res) => {
         if (!(err === null)) {
-            console.log('Error while inserting data: ' + err);
-            result(null, err);
+            console.log('Error while getting user data: ' + err);
         } else {
-            result(null, res)
+            count = res[0].count
+
+            if (count > 0) {
+                dbConn.query('UPDATE checkin SET checkin_time = ? WHERE checkin_time >= CURDATE() AND checkin_time < CURDATE() + INTERVAL 1 DAY AND emp_id = ?', [req.body.checkin_time, req.body.emp_id], (err, res) => {
+                    if (!(err === null)) {
+                        console.log('Error while inserting data1: ' + err);
+                        result(null, err);
+                        // dbConn.end();
+                    } else {
+                        dbConn.query('INSERT INTO checkin_log SET ?', req.body, (err, res) => {
+                            if (!(err === null)) {
+                                console.log('Error while inserting data2: ' + err);
+                                result(null, err);
+                                // dbConn.end();
+                            } else {
+                                result(null, res);
+                                // dbConn.end();
+                            }
+                        })
+                    }
+                })
+
+            } else {
+                dbConn.query('INSERT INTO checkin SET ?', req.body, (err, res) => {
+                    if (!(err === null)) {
+                        console.log('Error while inserting data3: ' + err);
+                        result(null, err);
+                        // dbConn.end();
+                    } else {
+                        dbConn.query('INSERT INTO checkin_log SET ?', req.body, (err, res) => {
+                            if (!(err === null)) {
+                                console.log('Error while inserting data4: ' + err);
+                                result(null, err);
+                                // dbConn.end();
+                            } else {
+                                result(null, res)
+                                // dbConn.end();
+                            }
+                        })
+                    }
+                })
+            }
         }
-        dbConn.end();
     })
 }
 
 Checkin.UpdateCheckin = (req, result) => {
-    dbConn.query('Update checkin set checkin_status = ? where uid = ?', [req.body.checkin_status, req.body.uid], (err, res) => {
+    dbConn.query('Update checkin set checkin_status = ?, ischecked = ? where uid = ?', [req.params.checkin_status, req.params.ischecked, req.params.uid], (err, res) => {
         if (err) {
             console.log('Error while updating the client: ' + err);
             result(null, err);
@@ -53,7 +93,7 @@ Checkin.UpdateCheckin = (req, result) => {
             console.log("client updated successfully");
             result(null, res);
         }
-        dbConn.end();
+       //dbConn.end();
     });
 }
 

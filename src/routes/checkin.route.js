@@ -9,6 +9,6 @@ router.get('/getcheckins', CheckinController.getCheckins);
 
 router.post('/insertcheckin', CheckinController.InsertCheckin);
 
-router.put('/updatecheckin', CheckinController.UpdateCheckin);
+router.put('/updatecheckin/:checkin_status/:ischecked/:uid', CheckinController.UpdateCheckin);
 
 module.exports = router;
