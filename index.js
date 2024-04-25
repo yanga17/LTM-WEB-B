@@ -31,6 +31,9 @@ app.use('/user', UserRoutes);
 const CheckinRoutes = require('./src/routes/checkin.route')
 app.use('/checkin', CheckinRoutes);
 
+const TicketsRoutes = require('./src/routes/tickets.route')
+app.use('/tickets', TicketsRoutes);
+
 // listen to the port
 app.listen(port, () => {
     console.log(`Express is running at port ${port}`);
