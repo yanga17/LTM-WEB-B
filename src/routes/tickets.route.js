@@ -7,11 +7,18 @@ require('dotenv').config({ path: './configuration.env' });
 
 router.get('/getickets', TicketsController.getTickets);
 
-router.get('/getactivetickets', TicketsController.getActiveTickets);
-
 router.get('/getickets/:callid', TicketsController.getEachTicket);
 
-router.post('/insertickets', TicketsController.InsertTickets);
+//active tickets
+router.get('/getactivetickets', TicketsController.getActiveTickets);
 
+router.get('/getactivetickets/:callid', TicketsController.getEachActiveTicket);
+
+//TO TBLTIME - ACTIVE TABLE
+router.post('/inserttickets', TicketsController.insertSelectedTicket);
+
+router.patch('/updateticket/:endtime/:callid', TicketsController.updateSelectedTicket);
+
+router.patch('/endticket/:employee/:callid', TicketsController.endActiveTicket);
 
 module.exports = router;
