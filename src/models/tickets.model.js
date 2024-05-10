@@ -106,6 +106,69 @@ Tickets.endActiveTicket = (req, result) => {
     });
 };
 
+Tickets.getCustomers = (result) => {
+    dbConn.query("SELECT uid, CONCAT(client_name, ',', LEG_num) AS Customer FROM legendtime.clients ORDER BY client_name ASC;", (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+        //dbConn.end();
+    })
+} 
+
+Tickets.getErrors = (result) => {
+    dbConn.query('SELECT idx, Errors FROM legendtime.tblcustomererrors', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+        //dbConn.end();
+    })
+}
+
+Tickets.getEmployees = (result) => {
+    dbConn.query('SELECT ID, Technician FROM legendtime.tbltechnicians order by Technician', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+        //dbConn.end();
+    })
+}
+
+Tickets.getTypes = (result) => {
+    dbConn.query('SELECT Type FROM legendtime.tbltype', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+        //dbConn.end();
+    })
+}
+
+Tickets.insertCallTicket = (req, result) => {
+    const { customer, problem, time, phoneNumber, clientsAnydesk, name, support_no, empl, logger, comments, urgent, issueType } = req.body;
+    dbConn.query('INSERT into legendtime.tblcalls(Customer, Problem, Time, Phone_Number, Clients_Anydesk, Name, Support_No, Empl, logger, Comments, urgent, IssueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, time, phoneNumber, clientsAnydesk, name, support_no, empl, logger, comments, urgent, issueType], (err, res) => {
+        if (err) {
+            console.log('Error while inserting call ticket:' + err);
+            result(null, err);
+        } else {
+            console.log('Ticket inserted successfully:', res);
+            result(null, res);
+        }
+    });
+}
+
+
+//INSERT into tblcalls(customer, problem, time, phoneNumber, clientsAnydesk, name, supportNo, empl, logger, comments, urgent, issueType) VALUES('WHIRES FM RADIO', 'WINDOWS', '2024-04-02 07:25:45', '0747593508',  '0987654321', 'YANGA', 'leg001', 'YANGA', 'eddy creep', 'Tested', 'Urgent', 'Problem')"
 module.exports = Tickets;
 
 
