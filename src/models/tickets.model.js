@@ -69,7 +69,8 @@ Tickets.getEachActiveTicket = (req, result) => {
     })
 }
 
-Tickets.insertSelectedTicket = (req, result) => {
+//take button in loggedTickets table
+Tickets.insertLoggedTicket = (req, result) => {
     const { employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType } = req.body;
     dbConn.query('INSERT INTO legendtime.tbltime (Employee, Customer, Activity, Phone_Number, Clients_Anydesk, StartTime, Type, Support_No, Comments, Name, Time_Taken, IssueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType], (err, res) => {
         if (err) {
@@ -81,8 +82,8 @@ Tickets.insertSelectedTicket = (req, result) => {
         }
     });
 }
-
-Tickets.updateSelectedTicket = (req, result) => {
+//take button in loggedTickets table
+Tickets.updateLoggedTicket = (req, result) => {
     dbConn.query('UPDATE legendtime.tblcalls SET EndTime = ?, Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.endtime, req.params.callid], (err, res) => {
         if (err) {
             console.log('Error while updating the specific call:' + err);
@@ -154,14 +155,27 @@ Tickets.getTypes = (result) => {
     })
 }
 
-Tickets.insertCallTicket = (req, result) => {
-    const { customer, problem, time, phoneNumber, clientsAnydesk, name, support_no, empl, logger, comments, urgent, issueType } = req.body;
-    dbConn.query('INSERT into legendtime.tblcalls(Customer, Problem, Time, Phone_Number, Clients_Anydesk, Name, Support_No, Empl, logger, Comments, urgent, IssueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, time, phoneNumber, clientsAnydesk, name, support_no, empl, logger, comments, urgent, issueType], (err, res) => {
+Tickets.insertStartCallTicket = (req, result) => {
+    const { customer, problem, time, phoneNumber, clientsAnydesk, name, support_no, empl, logger, comments, urgent, issueType, type } = req.body;
+    dbConn.query('INSERT into legendtime.tblcalls(Customer, Problem, Time, Phone_Number, Clients_Anydesk, Name, Support_No, Empl, logger, Comments, urgent, IssueType, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, time, phoneNumber, clientsAnydesk, name, support_no, empl, logger, comments, urgent, issueType, type], (err, res) => {
         if (err) {
             console.log('Error while inserting call ticket:' + err);
             result(null, err);
         } else {
             console.log('Ticket inserted successfully:', res);
+            result(null, res);
+        }
+    });
+}
+//UPDATE legendtime.tbltime SET Solution = 'TESTS ON SOLUTION INSERT', number_of_days = '1', FollowUp = '1', Completed = '1' WHERE ID = ?
+Tickets.endActiveTicketSolution = (req, result) => {
+    const { solution, numberOfDays, followUp, completed, id } = req.body;
+    dbConn.query('UPDATE legendtime.tbltime SET Solution = ?, number_of_days = ?, FollowUp = ?, Completed = ? WHERE ID = ?', [solution, numberOfDays, followUp, completed, id], (err, res) => {
+        if (err) {
+            console.log('Error while ending active ticket with a solution:' + err);
+            result(null, err);
+        } else {
+            console.log('Ticket Solution updated successfully:', res);
             result(null, res);
         }
     });
