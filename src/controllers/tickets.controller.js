@@ -49,8 +49,8 @@ exports.getEachActiveTicket = (req, res) => {
 }
 
 
-exports.insertSelectedTicket = (req, res) => {
-  TicketsModel.insertSelectedTicket(req, (err, employee) => {
+exports.insertLoggedTicket = (req, res) => {
+  TicketsModel.insertLoggedTicket(req, (err, employee) => {
     if (err) {
       employee.message = "Failed";
       res.send(err);
@@ -61,9 +61,9 @@ exports.insertSelectedTicket = (req, res) => {
   })
 }
 
-//update logged ticket with endtime x duration 4 tblcalls
-exports.updateSelectedTicket = (req, res) => {
-  TicketsModel.updateSelectedTicket(req, (err, user) => {
+//update logged ticket with endtime 4 tblcalls
+exports.updateLoggedTicket = (req, res) => {
+  TicketsModel.updateLoggedTicket(req, (err, user) => {
     if (err) {
       user.message = "Failed";
       res.send(err);
@@ -134,10 +134,9 @@ exports.getTypes = (req, res) => {
   })
 }
 
-
 //insert 4 StartCall
-exports.insertCallTicket = (req, res) => {
-  TicketsModel.insertCallTicket(req, (err, result) => {
+exports.insertStartCallTicket = (req, res) => {
+  TicketsModel.insertStartCallTicket(req, (err, result) => {
     if (err) {
       res.status(500).send({ message: err.message || 'Some error occurred while inserting the ticket.' });
     } else {
@@ -145,3 +144,14 @@ exports.insertCallTicket = (req, res) => {
     }
   });
 }
+
+exports.endActiveTicketSolution = (req, res) => {
+  TicketsModel.endActiveTicketSolution(req, (err, result) => {
+    if (err) {
+      res.status(500).send({ message: err.message || 'Some error occurred while updating the ActiveTickets Solution.' });
+    } else {
+      res.send({ message: 'Ticket Solution updated successfully.', data: result });
+    }
+  });
+}
+
