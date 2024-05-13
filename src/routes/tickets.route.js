@@ -21,4 +21,19 @@ router.patch('/updateticket/:endtime/:callid', TicketsController.updateSelectedT
 
 router.patch('/endticket/:employee/:callid', TicketsController.endActiveTicket);
 
+//getcustomers routes
+router.get('/getcustomers', TicketsController.getCustomers);
+
+//getproblems routes
+router.get('/geterrors', TicketsController.getErrors);
+
+//getemployee routes
+router.get('/getemployees', TicketsController.getEmployees);
+
+//gettype routes
+router.get('/getypes', TicketsController.getTypes);
+
+//StartCall insert statement
+router.post('/insertcallticket', TicketsController.insertCallTicket)
+
 module.exports = router;
