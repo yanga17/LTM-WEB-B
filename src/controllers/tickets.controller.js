@@ -155,3 +155,43 @@ exports.endActiveTicketSolution = (req, res) => {
   });
 }
 
+exports.insertDeletedTicket = (req, res) => {
+  TicketsModel.insertDeletedTicket(req, (err, result) => {
+    if (err) {
+      res.status(500).send({ message: err.message || 'Some error occurred while inserting the ticket.' });
+    } else {
+      res.send({ message: 'Ticket inserted successfully.', data: result });
+    }
+  });
+}
+
+exports.deleteCallReason = (req, res) => {
+  TicketsModel.deleteCallReason(req, (err, result) => {
+    if (err) {
+      res.status(500).send({ message: err.message || 'Some error occurred while updating the ActiveTickets Solution.' });
+    } else {
+      res.send({ message: 'Ticket Solution updated successfully.', data: result });
+    }
+  });
+}
+
+exports.deleteLoggedTicket = (req, res) => {
+  TicketsModel.deleteLoggedTicket(req, (err, result) => {
+    if (err) {
+      res.status(500).send({ message: err.message || 'An error occurred while deleting the Logged Ticket.' });
+    } else {
+      res.send({ message: 'Logged Ticked has been deleted successfully.', data: result });
+    }
+  });
+}
+
+
+exports.insertStartActiveTicket = (req, res) => {
+  TicketsModel.insertStartActiveTicket(req, (err, result) => {
+    if (err) {
+      res.status(500).send({ message: err.message || 'An error occurred while starting an active ticket.' });
+    } else {
+      res.send({ message: 'Active Ticket inserted successfully.', data: result });
+    }
+  });
+}

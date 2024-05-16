@@ -35,9 +35,20 @@ router.get('/getypes', TicketsController.getTypes);
 
 
 //StartCall insert statement - tblcalls
-router.post('/insertcallticket', TicketsController.insertStartCallTicket)
-
+router.post('/insertcallticket', TicketsController.insertStartCallTicket);
 //EndActiveTicket Solution - tbltime
-router.patch('/updateactivesolution', TicketsController.endActiveTicketSolution)
+router.patch('/updateactivesolution/:solution/:numberofdays/:followup/:completed/:id', TicketsController.endActiveTicketSolution);
+
+//deletedlogs
+router.post('/insertdeletedticket', TicketsController.insertDeletedTicket);
+
+router.patch('/deletecallreason/:reason/:callid', TicketsController.deleteCallReason);
+
+//deleted from tblcalls
+router.delete('/deleteloggedticket/:callid', TicketsController.deleteLoggedTicket);
+
+//StartActivity insert statement - tbltime
+router.post('/insertactiveticket', TicketsController.insertStartActiveTicket);
+
 
 module.exports = router;
