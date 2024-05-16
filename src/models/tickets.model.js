@@ -115,7 +115,7 @@ Tickets.getCustomers = (result) => {
         } else {
             result(null, res);
         }
-        //dbConn.end();
+
     })
 } 
 
@@ -127,7 +127,7 @@ Tickets.getErrors = (result) => {
         } else {
             result(null, res);
         }
-        //dbConn.end();
+
     })
 }
 
@@ -139,7 +139,7 @@ Tickets.getEmployees = (result) => {
         } else {
             result(null, res);
         }
-        //dbConn.end();
+
     })
 }
 
@@ -151,7 +151,6 @@ Tickets.getTypes = (result) => {
         } else {
             result(null, res);
         }
-        //dbConn.end();
     })
 }
 
@@ -167,10 +166,9 @@ Tickets.insertStartCallTicket = (req, result) => {
         }
     });
 }
-//UPDATE legendtime.tbltime SET Solution = 'TESTS ON SOLUTION INSERT', number_of_days = '1', FollowUp = '1', Completed = '1' WHERE ID = ?
+
 Tickets.endActiveTicketSolution = (req, result) => {
-    const { solution, numberOfDays, followUp, completed, id } = req.body;
-    dbConn.query('UPDATE legendtime.tbltime SET Solution = ?, number_of_days = ?, FollowUp = ?, Completed = ? WHERE ID = ?', [solution, numberOfDays, followUp, completed, id], (err, res) => {
+    dbConn.query('UPDATE legendtime.tbltime SET Solution = ?, number_of_days = ?, FollowUp = ?, Completed = ? WHERE ID = ?', [req.params.solution, req.params.numberofdays, req.params.followup, req.params.completed, req.params.id], (err, res) => {
         if (err) {
             console.log('Error while ending active ticket with a solution:' + err);
             result(null, err);
@@ -181,8 +179,55 @@ Tickets.endActiveTicketSolution = (req, result) => {
     });
 }
 
+Tickets.insertDeletedTicket = (req, result) => {
+    const { callid, employee, customer, problem, clientname, phonenumber, startime, supportnumber, priority, issueType, type, comments, insertiontime  } = req.body;
+    dbConn.query('INSERT INTO legendtime.deletedlogs (Call_ID, Employee, Customer, Problem, Client_Name, Phone_Number, Start_Time, SupportNumber, Priority, IssueType, Type, Comments, insertion_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [callid, employee, customer, problem, clientname, phonenumber, startime, supportnumber, priority, issueType, type, comments, insertiontime], (err, res) => {
+        if (err) {
+            console.log('Error while inserting the ticket:' + err);
+            result(null, err);
+        } else {
+            console.log('Ticket inserted successfully:', res);
+            result(null, res);
+        }
+    });
+}
 
-//INSERT into tblcalls(customer, problem, time, phoneNumber, clientsAnydesk, name, supportNo, empl, logger, comments, urgent, issueType) VALUES('WHIRES FM RADIO', 'WINDOWS', '2024-04-02 07:25:45', '0747593508',  '0987654321', 'YANGA', 'leg001', 'YANGA', 'eddy creep', 'Tested', 'Urgent', 'Problem')"
+Tickets.deleteCallReason = (req, result) => {
+    dbConn.query('UPDATE legendtime.deletedlogs SET Reason = ? WHERE Call_ID = ?', [req.params.reason, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating ac ticket with a solution:' + err);
+            result(null, err);
+        } else {
+            console.log('Ticket Solution updated successfully:', res);
+            result(null, res);
+        }
+    });
+}
+
+Tickets.deleteLoggedTicket = (req, result) => {
+    dbConn.query('DELETE FROM legendtime.tblcalls WHERE Call_ID = ?', [req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating ac ticket with a solution:' + err);
+            result(null, err);
+        } else {
+            console.log('Ticket Solution updated successfully:', res);
+            result(null, res);
+        }
+    });
+}
+
+
+Tickets.insertStartActiveTicket = (req, result) => {
+    const { employee, customer, name,  activity, startTime, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType } = req.body;
+    dbConn.query('INSERT into legendtime.tbltime(Employee, Customer, Name,  Activity, StartTime, Type, Support_No, Phone_Number, Clients_Anydesk, Comments, IssueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [employee, customer, name,  activity, startTime, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType], (err, res) => {
+        if (err) {
+            console.log('Error while inserting active ticket:' + err);
+            result(null, err);
+        } else {
+            console.log('Active Ticket inserted successfully:', res);
+            result(null, res);
+        }
+    });
+}
+
 module.exports = Tickets;
-
-
