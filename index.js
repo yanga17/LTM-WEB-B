@@ -11,6 +11,8 @@ const corsOptions = {
 //.ENV
 require('dotenv').config({ path: './configuration.env' });
 
+//require('dotenv').config({ path: './configurationLtm.env' });
+
 // Instantiate an Express application
 const app = express();
 
@@ -36,6 +38,12 @@ app.use('/tickets', TicketsRoutes);
 
 const CustomersRoutes = require('./src/routes/customers.route')
 app.use('/customers', CustomersRoutes);
+
+const DeletedLogsRoutes = require('./src/routes/deletedlogs.route')
+app.use('/deletedlogs', DeletedLogsRoutes);
+
+const FollowUpRoutes = require('./src/routes/followups.route')
+app.use('/followups', FollowUpRoutes);
 
 // listen to the port
 app.listen(port, () => {

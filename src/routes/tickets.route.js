@@ -8,11 +8,10 @@ require('dotenv').config({ path: './configuration.env' });
 //getAll loggedTickets
 router.get('/getickets', TicketsController.getTickets);
 //getEach loggedTicket using ID - viewInDetail
-router.get('/getickets/:callid', TicketsController.getEachTicket);
+//router.get('/getickets/:callid', TicketsController.getEachTicket);
 
-//getAll activeTickets
+//getAll activeTickets || getEach activeTicket using ID - viewInDetail
 router.get('/getactivetickets', TicketsController.getActiveTickets);
-//getEach activeTicket using ID - viewInDetail
 router.get('/getactivetickets/:callid', TicketsController.getEachActiveTicket);
 
 
@@ -24,13 +23,10 @@ router.patch('/updateloggedticket/:endtime/:callid', TicketsController.updateLog
 router.patch('/endticket/:employee/:callid', TicketsController.endActiveTicket);
 
 
-//getAllCustomers
+//getAllCustomers, Problems, Employees, Types
 router.get('/getcustomers', TicketsController.getCustomers);
-//getAllProblems
 router.get('/geterrors', TicketsController.getErrors);
-//getAllEmployees
 router.get('/getemployees', TicketsController.getEmployees);
-//getAllType
 router.get('/getypes', TicketsController.getTypes);
 
 
@@ -49,6 +45,19 @@ router.delete('/deleteloggedticket/:callid', TicketsController.deleteLoggedTicke
 
 //StartActivity insert statement - tbltime
 router.post('/insertactiveticket', TicketsController.insertStartActiveTicket);
+router.post('/transferticket', TicketsController.transferTicket);
+
+//followUp Customers
+router.post('/insertfollowup', TicketsController.insertFollowUpTicket);
+
+//getTicket based on ID - tbTime
+router.get('/getfollowupticket/:id', TicketsController.getFollowUpTicket);
+
+//geticketSummaries
+router.get('/getasksummary', TicketsController.getTaskSummary);
+router.get('/geterrosummary', TicketsController.getErrorSummary);
+router.get('/getotalsummary', TicketsController.getTotalSummary);
+router.get('/getactivesummary', TicketsController.getActiveTicketSummary);
 
 
 module.exports = router;
