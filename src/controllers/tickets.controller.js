@@ -48,7 +48,6 @@ exports.getEachActiveTicket = (req, res) => {
   })
 }
 
-
 exports.insertLoggedTicket = (req, res) => {
   TicketsModel.insertLoggedTicket(req, (err, employee) => {
     if (err) {
@@ -178,9 +177,9 @@ exports.deleteCallReason = (req, res) => {
 exports.deleteLoggedTicket = (req, res) => {
   TicketsModel.deleteLoggedTicket(req, (err, result) => {
     if (err) {
-      res.status(500).send({ message: err.message || 'An error occurred while deleting the Logged Ticket.' });
+      res.status(500).send({ message: err.message || 'An error occurred while removing the DeletedLogged Ticket.' });
     } else {
-      res.send({ message: 'Logged Ticked has been deleted successfully.', data: result });
+      res.send({ message: 'DeletedLogged Ticket has been removed successfully.', data: result });
     }
   });
 }
@@ -194,4 +193,89 @@ exports.insertStartActiveTicket = (req, res) => {
       res.send({ message: 'Active Ticket inserted successfully.', data: result });
     }
   });
+}
+
+exports.transferTicket = (req, res) => {
+  TicketsModel.transferTicket(req, (err, result) => {
+    if (err) {
+      res.status(500).send({ message: err.message || 'An error occurred while transfering the active ticket.' });
+    } else {
+      res.send({ message: 'Active Ticket was transfered successfully.', data: result });
+    }
+  });
+}
+
+//insertFollowUp 
+exports.insertFollowUpTicket = (req, res) => {
+  TicketsModel.insertFollowUpTicket(req, (err, result) => {
+      if (err) {
+        res.status(500).send({ message: err.message || 'An error occurred while starting a followUp on a Customer.' });
+      } else {
+        res.send({ message: 'Follow-Up has been started successfully.', data: result });
+      }
+    });
+}
+
+//GET TICKETFOLLOWUP BASED ON ID: - getFollowUpTicket
+exports.getFollowUpTicket = (req, res) => {
+  TicketsModel.getFollowUpTicket(req, (err, user) => {
+    if (err) {
+      user.message = "Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Success";
+    res.send(user);
+  })
+}
+
+
+
+//TicketSummary Routes
+exports.getTaskSummary = (req, res) => {
+  TicketsModel.getTaskSummary((err, user) => {
+    if (err) {
+      user.message = "Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Success";
+    res.send(user);
+  })
+}
+
+exports.getErrorSummary = (req, res) => {
+  TicketsModel.getErrorSummary((err, user) => {
+    if (err) {
+      user.message = "Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Success";
+    res.send(user);
+  })
+}
+
+exports.getTotalSummary = (req, res) => {
+  TicketsModel.getTotalSummary((err, user) => {
+    if (err) {
+      user.message = "Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Success";
+    res.send(user);
+  })
+} 
+
+exports.getActiveTicketSummary = (req, res) => {
+  TicketsModel.getActiveTicketSummary((err, user) => {
+    if (err) {
+      user.message = "Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Success";
+    res.send(user);
+  })
 }

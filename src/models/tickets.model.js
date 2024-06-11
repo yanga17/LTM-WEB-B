@@ -31,7 +31,7 @@ Tickets.getTickets = (result) => {
         }
         //dbConn.end();
     })
-}
+}//getFollowUpTicket
 
 Tickets.getEachTicket = (req, result) => {
     dbConn.query('SELECT * FROM legendtime.tblcalls WHERE Taken = 0 AND Call_ID = ?', [req.params.callid], (err, res) => {
@@ -46,7 +46,7 @@ Tickets.getEachTicket = (req, result) => {
 }
 
 Tickets.getActiveTickets = (result) => {
-    dbConn.query('SELECT ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number as Telephone, StartTime, Support_No, Type, Comments, name as Name, Time_Taken, IssueType FROM legendtime.tbltime WHERE EndTime IS NULL', (err, res) => {
+    dbConn.query('SELECT ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number as Telephone, StartTime, Support_No, Type, Comments, name as Name, Time_Taken, IssueType, Priority FROM legendtime.tbltime WHERE EndTime IS NULL', (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -229,5 +229,102 @@ Tickets.insertStartActiveTicket = (req, result) => {
         }
     });
 }
+
+Tickets.transferTicket = (req, result) => {
+    const { customer, problem, clientsAnydesk, phoneNumber, time, supportNumber, empl, comments, solution, name, urgent, issueType, type } = req.body;
+    dbConn.query('insert into legendtime.tblcalls (Customer, Problem, Clients_Anydesk, Phone_Number, Time, Support_No, Empl, Comments, Solution, name, urgent, IssueType, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, clientsAnydesk, phoneNumber, time, supportNumber, empl, comments, solution, name, urgent, issueType, type], (err, res) => {
+        if (err) {
+            console.log('Error while transfering active ticket:' + err);
+            result(null, err);
+        } else {
+            console.log('Active Ticket was transfered successfully:', res);
+            result(null, res);
+        }
+    });
+}
+
+Tickets.getFollowUpTicket = (req, result) => {
+    dbConn.query('SELECT * FROM legendtime.tbltime WHERE ID = ?', [req.params.id], (err, res) => {
+        if (err) {
+            console.log('Error while updating ac ticket with a solution:' + err);
+            result(null, err);
+        } else {
+            console.log('Ticket Solution updated successfully:', res);
+            result(null, res);
+        }
+    });
+}
+
+Tickets.insertFollowUpTicket = (req, result) => {
+    const { id, employee, customer, activity, clientsAnydesk, phoneNumber, startTime, endTime, duration, type, solution, supportNo, comments, followUp, completed, name, numberOfDays, flStartTime, issueType, priority } = req.body;
+    dbConn.query("INSERT INTO legendtime.tblfollowedupcustomers (ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number, StartTime, EndTime, Duration, Type, Solution, Support_No, Comments, FollowUp, Completed, name, NumberOfDays, FLStartTime, IssueType, Priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [id, employee, customer, activity, clientsAnydesk, phoneNumber, startTime, endTime, duration, type, solution, supportNo, comments, followUp, completed, name, numberOfDays, flStartTime, issueType, priority], (err, res) => {
+        if (err) {
+            console.log('Error while inserting a follow-up ticket:' + err);
+            result(null, err);
+        } else {
+            console.log('A Follow-Up on a customer has started successfully:', res);
+            result(null, res);
+        }
+    });
+}
+
+// Tickets.getFollowUpTicket = (req, result) => {
+//     dbConn.query('SELECT * FROM legendtime.tbltime WHERE ID = ?', [req.params.id], (err, res) => {
+//         if (!(err === null)) {
+//             console.log('Error while getting the specific call:' + err);
+//             result(null, err)
+//         } else {
+//             console.log(res, 'result');
+//             result(null, res); 
+//         }
+//     })
+// }
+
+
+//TicketSummary
+Tickets.getTaskSummary = (result) => {
+    dbConn.query('SELECT COUNT(*) AS NumberOfTasks FROM legendtime.tbltime WHERE Completed = "1" AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = "Task" AND DATE(EndTime) = CURDATE()', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    })
+}
+
+Tickets.getErrorSummary = (result) => {
+    dbConn.query('SELECT COUNT(*) AS NumberOfProblems FROM legendtime.tbltime WHERE Completed = "1" AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = "Problem" AND DATE(EndTime) = CURDATE()', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    })
+}
+
+Tickets.getTotalSummary = (result) => {
+    dbConn.query('SELECT COUNT(*) AS TicketsCompleted FROM legendtime.tbltime WHERE Completed = "1" AND EndTime IS NOT NULL AND Duration IS NOT NULL AND DATE(EndTime) = CURDATE()', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    })
+} 
+
+Tickets.getActiveTicketSummary = (result) => {
+    dbConn.query('SELECT COUNT(*) AS ActiveTickets FROM legendtime.tbltime WHERE EndTime IS NULL', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    })
+}
+
 
 module.exports = Tickets;
