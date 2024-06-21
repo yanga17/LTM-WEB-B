@@ -45,6 +45,11 @@ app.use('/deletedlogs', DeletedLogsRoutes);
 const FollowUpRoutes = require('./src/routes/followups.route')
 app.use('/followups', FollowUpRoutes);
 
+const DashboardRoutes = require('./src/routes/dashboard.route')
+app.use('/dashboard', DashboardRoutes);
+
+const ReportsRoutes = require('./src/routes/reports.route')
+app.use('/reports', ReportsRoutes);
 // listen to the port
 app.listen(port, () => {
     console.log(`Express is running at port ${port}`);

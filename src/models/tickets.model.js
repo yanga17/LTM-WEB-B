@@ -31,7 +31,7 @@ Tickets.getTickets = (result) => {
         }
         //dbConn.end();
     })
-}//getFollowUpTicket
+}
 
 Tickets.getEachTicket = (req, result) => {
     dbConn.query('SELECT * FROM legendtime.tblcalls WHERE Taken = 0 AND Call_ID = ?', [req.params.callid], (err, res) => {
@@ -267,19 +267,6 @@ Tickets.insertFollowUpTicket = (req, result) => {
         }
     });
 }
-
-// Tickets.getFollowUpTicket = (req, result) => {
-//     dbConn.query('SELECT * FROM legendtime.tbltime WHERE ID = ?', [req.params.id], (err, res) => {
-//         if (!(err === null)) {
-//             console.log('Error while getting the specific call:' + err);
-//             result(null, err)
-//         } else {
-//             console.log(res, 'result');
-//             result(null, res); 
-//         }
-//     })
-// }
-
 
 //TicketSummary
 Tickets.getTaskSummary = (result) => {

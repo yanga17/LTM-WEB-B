@@ -20,7 +20,7 @@ var DeletedLogs = function (user) {
 };
 
 DeletedLogs.getDeletedLogs = (result) => {
-    ltmDbConn.query("SELECT idx, Call_ID, Employee, Customer, Problem, Client_Name, Phone_Number, Start_Time, End_Time, SupportNumber, Priority, IssueType, Type, Comments, insertion_time, Reason FROM deletedlogs ", (err, res) => {
+    ltmDbConn.query("SELECT idx, Call_ID, Employee, Customer, Problem, Client_Name, Phone_Number, Start_Time, End_Time, SupportNumber, Priority, IssueType, Type, Comments, insertion_time, Reason FROM deletedlogs", (err, res) => {
         if (err) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
