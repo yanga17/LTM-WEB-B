@@ -25,7 +25,7 @@ var Dashboard = function (user) {
 };
 
 Dashboard.getEmpTicketSummary = (req, result) => {
-    ltmDbConn.query("SELECT name, Tasks, Errors, (Tasks + Errors) AS Overall FROM (SELECT Employee AS name, COUNT(CASE WHEN IssueType = 'Task' THEN 1 END) AS Tasks, COUNT(CASE WHEN IssueType = 'Problem' THEN 1 END) AS Errors FROM tbltime WHERE EndTime IS NOT NULL AND StartTime >= ? AND EndTime <= ? GROUP BY Employee) AS subquery;", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT Employee, Tasks, Errors, (Tasks + Errors) AS Overall FROM (SELECT Employee, COUNT(CASE WHEN IssueType = 'Task' THEN 1 END) AS Tasks, COUNT(CASE WHEN IssueType = 'Problem' THEN 1 END) AS Errors FROM tbltime WHERE EndTime IS NOT NULL AND StartTime BETWEEN ? AND ? GROUP BY Employee) AS subquery", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting tasks summary:' + err);
             result(null, err);
