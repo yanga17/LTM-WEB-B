@@ -45,7 +45,8 @@ router.delete('/deleteloggedticket/:callid', TicketsController.deleteLoggedTicke
 
 //StartActivity insert statement - tbltime
 router.post('/insertactiveticket', TicketsController.insertStartActiveTicket);
-router.post('/transferticket', TicketsController.transferTicket);
+router.post('/transferticket/:employee/:callid', TicketsController.transferTicket);
+router.patch('/updatetransferedticket/:callid', TicketsController.updatetransferedTicket);
 
 //followUp Customers
 router.post('/insertfollowup', TicketsController.insertFollowUpTicket);
