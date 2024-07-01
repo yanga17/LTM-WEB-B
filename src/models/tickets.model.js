@@ -231,13 +231,24 @@ Tickets.insertStartActiveTicket = (req, result) => {
 }
 
 Tickets.transferTicket = (req, result) => {
-    const { customer, problem, clientsAnydesk, phoneNumber, time, supportNumber, empl, comments, solution, name, urgent, issueType, type } = req.body;
-    dbConn.query('insert into legendtime.tblcalls (Customer, Problem, Clients_Anydesk, Phone_Number, Time, Support_No, Empl, Comments, Solution, name, urgent, IssueType, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, clientsAnydesk, phoneNumber, time, supportNumber, empl, comments, solution, name, urgent, issueType, type], (err, res) => {
+    dbConn.query("INSERT INTO tblcalls(Customer, Problem, Clients_Anydesk, Phone_Number, name, Time, Support_No, Empl, Comments, IssueType, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), ?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
         if (err) {
-            console.log('Error while transfering active ticket:' + err);
+            console.log('Error while transfering the ticket to the next Employee:' + err);
             result(null, err);
         } else {
-            console.log('Active Ticket was transfered successfully:', res);
+            console.log('Transfering the ticket to the next Employee was Successful:', res);
+            result(null, res);
+        }
+    });
+}
+
+Tickets.updatetransferedTicket = (req, result) => {
+    dbConn.query("UPDATE legendtime.tbltime Set EndTime = NOW(), Duration = TIMEDIFF(EndTime, StartTime) WHERE ID = ?", [req.params.id], (err, res) => {
+        if (err) {
+            console.log('Updating the Endtime of the selected ticket errored out:' + err);
+            result(null, err);
+        } else {
+            console.log('Updating the Endtime of the selected ticket Successful:', res);
             result(null, res);
         }
     });
