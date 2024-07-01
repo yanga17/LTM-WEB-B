@@ -9,6 +9,14 @@ const dbConn = mysql.createConnection({
     database: process.env.DATABASE
 });
 
+const dbConnLg = mysql.createConnection({
+    host: process.env.LTMHOSTDEV,
+    port: process.env.LTMPORT,
+    user: process.env.LTMUSER,
+    password: process.env.LTMPASSWORD,
+    database: process.env.LTMDATABASE
+});
+
 dbConn.connect(function (error) {
     if (error) {
         console.error('error connecting:' + error.stack);
