@@ -24,8 +24,20 @@ var Dashboard = function (user) {
     this.Priority = user.Priority
 };
 
+// Dashboard.getEmpTicketSummary = (req, result) => {
+//     ltmDbConn.query("SELECT name, Tasks, Errors, (Tasks + Errors) AS Overall FROM (SELECT Employee AS name, COUNT(CASE WHEN IssueType = 'Task' THEN 1 END) AS Tasks, COUNT(CASE WHEN IssueType = 'Problem' THEN 1 END) AS Errors FROM tbltime WHERE EndTime IS NOT NULL AND StartTime >= ? AND EndTime <= ? GROUP BY Employee) AS subquery;", [req.params.starttime, req.params.endtime], (err, res) => {
+//         if (err) {
+//             console.log('Error while getting tasks summary:' + err);
+//             result(null, err);
+//         } else {
+//             console.log('Fetching the Employee Ticket Summary was Successful:', res);
+//             result(null, res);
+//         }
+//     });
+// }
+
 Dashboard.getEmpTicketSummary = (req, result) => {
-    ltmDbConn.query("SELECT name, Tasks, Errors, (Tasks + Errors) AS Overall FROM (SELECT Employee AS name, COUNT(CASE WHEN IssueType = 'Task' THEN 1 END) AS Tasks, COUNT(CASE WHEN IssueType = 'Problem' THEN 1 END) AS Errors FROM tbltime WHERE EndTime IS NOT NULL AND StartTime >= ? AND EndTime <= ? GROUP BY Employee) AS subquery;", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT name, SUM(Tasks) AS Tasks, SUM(Errors) AS Errors, SUM(Tasks + Errors) AS Overall, ROUND(AVG(TIMESTAMPDIFF(MINUTE, StartTime, EndTime)), 2) AS AverageTime FROM (SELECT Employee AS name, CASE WHEN IssueType = 'Task' THEN 1 ELSE 0 END AS Tasks, CASE WHEN IssueType = 'Problem' THEN 1 ELSE 0 END AS Errors, StartTime, EndTime FROM tbltime WHERE EndTime IS NOT NULL AND StartTime BETWEEN ? AND ? ) AS subquery GROUP BY name", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting tasks summary:' + err);
             result(null, err);
