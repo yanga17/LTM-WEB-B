@@ -196,15 +196,28 @@ exports.insertStartActiveTicket = (req, res) => {
 }
 
 exports.transferTicket = (req, res) => {
-  TicketsModel.transferTicket(req, (err, result) => {
+  TicketsModel.transferTicket(req, (err, user) => {
     if (err) {
-      res.status(500).send({ message: err.message || 'An error occurred while transfering the active ticket.' });
-    } else {
-      res.send({ message: 'Active Ticket was transfered successfully.', data: result });
+      user.message = "Transfering a Ticket to another Employee - Failed";
+      res.send(err);
+      process.exit(1);
     }
-  });
+      user.message = "Transfering a Ticket to another Employee - Success";
+      res.send(user);
+  })
 }
 
+exports.updatetransferedTicket = (req, res) => {
+  TicketsModel.updatetransferedTicket(req, (err, user) => {
+    if (err) {
+      user.message = "Updating Transfered Tickets EndTime in tblTime - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+      user.message = "Updating Transfered Tickets EndTime in tblTime - Success";
+      res.send(user);
+  })
+}
 //insertFollowUp 
 exports.insertFollowUpTicket = (req, res) => {
   TicketsModel.insertFollowUpTicket(req, (err, result) => {

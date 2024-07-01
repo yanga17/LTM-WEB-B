@@ -25,7 +25,7 @@ var Reports = function (user) {
 };
 
 Reports.getClientHistoryReport = (req, result) => {
-    ltmDbConn.query("SELECT ID, Customer, Activity, Support_No, StartTime, EndTime, Duration, IssueType FROM legendtime.tbltime WHERE StartTime BETWEEN ? and ? ORDER BY Employee, StartTime DESC", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT ID, Customer, Activity, Support_No, StartTime, EndTime, Duration, Comments, Phone_Number, Solution, IssueType FROM legendtime.tbltime WHERE StartTime BETWEEN ? and ? ORDER BY Employee, StartTime DESC", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting the Customer Calls Report Data:' + err);
             result(null, err);
@@ -37,7 +37,7 @@ Reports.getClientHistoryReport = (req, result) => {
 }
 
 Reports.getCallTimesReport = (req, result) => {
-    ltmDbConn.query("SELECT ID, Employee, Activity, Customer, Phone_Number, StartTime, EndTime, Duration, Comments, Solution FROM tbltime WHERE StartTime BETWEEN ? AND ? ORDER BY Employee, StartTime DESC", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT Call_ID, Customer, SUM(Taken) as CallCount, IF(AVG(TIMESTAMPDIFF(MINUTE, time, endtime)) < 60, CONCAT(ROUND(AVG(TIMESTAMPDIFF(MINUTE, time, endtime)), 2), ' Min'), CONCAT(ROUND(AVG(TIMESTAMPDIFF(MINUTE, time, endtime)) / 60, 2), ' Hours')) as 'AverageTime', IF(SUM(TIMESTAMPDIFF(MINUTE, time, endtime)) < 60, CONCAT(ROUND(SUM(TIMESTAMPDIFF(MINUTE, time, endtime)), 2), ' Min'), CONCAT(ROUND(SUM(TIMESTAMPDIFF(MINUTE, time, endtime)) / 60, 2), ' Hours')) as 'TotalHours' FROM legendtime.tblcalls WHERE DATE(Time) BETWEEN ? AND ? GROUP BY Customer ORDER BY CallCount DESC", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting the Customer Call Times Report Data:' + err);
             result(null, err);
@@ -49,7 +49,7 @@ Reports.getCallTimesReport = (req, result) => {
 }
 
 Reports.getCustomerCallsReport = (req, result) => {
-    ltmDbConn.query("SELECT ID, Customer, IssueType, COUNT(Customer) AS CallCount FROM legendtime.tbltime WHERE (StartTime) BETWEEN ? and ? GROUP BY Customer ORDER BY CallCount DESC", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT ID, Customer, Activity, COUNT(Customer) AS CallCount FROM legendtime.tbltime WHERE (StartTime) BETWEEN ? and ? GROUP BY Customer ORDER BY CallCount DESC", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting the Customer Calls Report Data:' + err);
             result(null, err);
