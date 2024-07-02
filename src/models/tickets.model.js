@@ -1,4 +1,5 @@
 var dbConn = require("../../config/db.config");
+var ltConn = require("../../config/legendTimeDb.config.js");
 
 var Tickets = function (user) {
     this.callid = user.callid;
@@ -22,7 +23,7 @@ var Tickets = function (user) {
 
 
 Tickets.getTickets = (result) => {
-    dbConn.query('SELECT Call_ID, Customer, Problem, Phone_Number, Name, Time, Empl, Comments, IssueType FROM legendtime.tblcalls WHERE Taken = 0', (err, res) => {
+    dbConn.query('SELECT Call_ID, Customer, Problem, Phone_Number, Name, Time, Empl, Support_No, Clients_Anydesk, logger, Comments, urgent, IssueType, Type FROM legendtime.tblcalls WHERE Taken = 0', (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -71,13 +72,13 @@ Tickets.getEachActiveTicket = (req, result) => {
 
 //take button in loggedTickets table
 Tickets.insertLoggedTicket = (req, result) => {
-    const { employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType } = req.body;
-    dbConn.query('INSERT INTO legendtime.tbltime (Employee, Customer, Activity, Phone_Number, Clients_Anydesk, StartTime, Type, Support_No, Comments, Name, Time_Taken, IssueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType], (err, res) => {
+    const { employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType, priority } = req.body;
+    dbConn.query('INSERT INTO legendtime.tbltime (Employee, Customer, Activity, Phone_Number, Clients_Anydesk, StartTime, Type, Support_No, Comments, Name, Time_Taken, IssueType, Priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType, priority], (err, res) => {
         if (err) {
-            console.log('Error while inserting the ticket:' + err);
+            console.log('Error while inserting the logged ticket into ActiveTickets Table:' + err);
             result(null, err);
         } else {
-            console.log('Ticket inserted successfully:', res);
+            console.log('Logged Ticket inserted successfully into ActiveTickets:', res);
             result(null, res);
         }
     });
@@ -231,7 +232,7 @@ Tickets.insertStartActiveTicket = (req, result) => {
 }
 
 Tickets.transferTicket = (req, result) => {
-    dbConn.query("INSERT INTO tblcalls(Customer, Problem, Clients_Anydesk, Phone_Number, name, Time, Support_No, Empl, Comments, IssueType, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), ?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
+    ltConn.query("INSERT INTO tblcalls(Customer, Problem, Clients_Anydesk, Phone_Number, name, Time, Support_No, Empl, Comments, IssueType, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), ?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
         if (err) {
             console.log('Error while transfering the ticket to the next Employee:' + err);
             result(null, err);
@@ -243,7 +244,7 @@ Tickets.transferTicket = (req, result) => {
 }
 
 Tickets.updatetransferedTicket = (req, result) => {
-    dbConn.query("UPDATE legendtime.tbltime Set EndTime = NOW(), Duration = TIMEDIFF(EndTime, StartTime) WHERE ID = ?", [req.params.id], (err, res) => {
+    ltConn.query("UPDATE legendtime.tbltime SET EndTime = NOW(), Duration = TIMEDIFF(NOW(), StartTime) WHERE ID = ?", [req.params.id], (err, res) => {
         if (err) {
             console.log('Updating the Endtime of the selected ticket errored out:' + err);
             result(null, err);
