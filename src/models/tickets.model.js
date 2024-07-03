@@ -30,7 +30,6 @@ Tickets.getTickets = (result) => {
         } else {
             result(null, res);
         }
-        //dbConn.end();
     })
 }
 
@@ -54,7 +53,6 @@ Tickets.getActiveTickets = (result) => {
         } else {
             result(null, res);
         }
-        //dbConn.end();
     })
 }
 
