@@ -25,7 +25,7 @@ var Dashboard = function (user) {
 };
 
 Dashboard.getEmpTicketSummary = (req, result) => {
-    ltmDbConn.query("SELECT name, SUM(Tasks) AS Tasks, SUM(Errors) AS Errors, SUM(Tasks + Errors) AS Overall, ROUND(AVG(TIMESTAMPDIFF(MINUTE, StartTime, EndTime)), 2) AS AverageTime FROM (SELECT Employee AS name, CASE WHEN IssueType = 'Task' THEN 1 ELSE 0 END AS Tasks, CASE WHEN IssueType = 'Problem' THEN 1 ELSE 0 END AS Errors, StartTime, EndTime FROM tbltime WHERE EndTime IS NOT NULL AND StartTime BETWEEN ? AND ? ) AS subquery GROUP BY name", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT name, SUM(Tasks) AS Tasks, SUM(Errors) AS Errors, SUM(Tasks + Errors) AS Overall, ROUND(AVG(TIMESTAMPDIFF(MINUTE, StartTime, EndTime)), 2) AS AverageTime FROM (SELECT Employee AS name, CASE WHEN IssueType = 'Task' THEN 1 ELSE 0 END AS Tasks, CASE WHEN IssueType = 'Problem' THEN 1 ELSE 0 END AS Errors, StartTime, EndTime FROM legendtime.tbltime WHERE EndTime IS NOT NULL AND StartTime BETWEEN ? AND ? ) AS subquery GROUP BY name", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting tasks summary:' + err);
             result(null, err);
@@ -37,7 +37,7 @@ Dashboard.getEmpTicketSummary = (req, result) => {
 }
 
 Dashboard.getCustomerSummary = (req, result) => {
-    ltmDbConn.query("SELECT Customer, Activity AS Error, COUNT(Activity) AS ErrorCount FROM tbltime WHERE EndTime IS NOT NULL AND IssueType = 'Problem' AND Activity IS NOT NULL OR '' AND StartTime >= ?  AND EndTime <= ?  GROUP BY Customer, Activity ORDER BY ErrorCount DESC LIMIT 20", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT Customer, Activity AS Error, COUNT(Activity) AS ErrorCount FROM legendtime.tbltime WHERE EndTime IS NOT NULL AND IssueType = 'Problem' AND Activity IS NOT NULL OR '' AND StartTime >= ?  AND EndTime <= ?  GROUP BY Customer, Activity ORDER BY ErrorCount DESC LIMIT 20", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting Customer Data Summary:' + err);
             result(null, err);
@@ -85,7 +85,7 @@ Dashboard.getClientSummary = (result) => {
 
 //commonErrorsGrid
 Dashboard.getCommonErrors = (result) => {
-    ltmDbConn.query("SELECT Activity, COUNT(Activity) AS CommonErrors FROM tbltime GROUP BY Activity ORDER BY CommonErrors DESC LIMIT 5;", (err, res) => {
+    ltmDbConn.query("SELECT Activity, COUNT(Activity) AS CommonErrors FROM legendtime.tbltime GROUP BY Activity ORDER BY CommonErrors DESC LIMIT 5;", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -97,7 +97,7 @@ Dashboard.getCommonErrors = (result) => {
 
 //CommonTasksGrid
 Dashboard.getCommonTasks = (result) => {
-    ltmDbConn.query("SELECT Activity, COUNT(Activity) AS CommonTasks FROM tbltime where IssueType = 'Task' GROUP BY Activity ORDER BY CommonTasks DESC LIMIT 5;", (err, res) => {
+    ltmDbConn.query("SELECT Activity, COUNT(Activity) AS CommonTasks FROM legendtime.tbltime where IssueType = 'Task' GROUP BY Activity ORDER BY CommonTasks DESC LIMIT 5;", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);

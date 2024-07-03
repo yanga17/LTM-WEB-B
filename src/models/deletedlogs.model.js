@@ -20,7 +20,7 @@ var DeletedLogs = function (user) {
 };
 
 DeletedLogs.getDeletedLogs = (result) => {
-    ltmDbConn.query("SELECT idx, Call_ID, Employee, Customer, Problem, Client_Name, Phone_Number, Start_Time, End_Time, SupportNumber, Priority, IssueType, Type, Comments, insertion_time, Reason FROM deletedlogs", (err, res) => {
+    ltmDbConn.query("SELECT idx, Call_ID, Employee, Customer, Problem, Client_Name, Phone_Number, Start_Time, End_Time, SupportNumber, Priority, IssueType, Type, Comments, insertion_time, Reason FROM legendtime.deletedlogs", (err, res) => {
         if (err) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -44,7 +44,7 @@ DeletedLogs.undoCallTicket = (req, result) => {
 }
 
 DeletedLogs.deleteTicketLog = (req, result) => {
-    ltmDbConn.query('DELETE FROM deletedlogs WHERE idx = ?', [req.params.idx], (err, res) => {
+    ltmDbConn.query('DELETE FROM legendtime.deletedlogs WHERE idx = ?', [req.params.idx], (err, res) => {
         if (err) {
             console.log('Error while deleting a ticket from DeletedLogsTable:' + err);
             result(null, err);
