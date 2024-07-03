@@ -12,7 +12,7 @@ router.post('/insertauditlog', UserController.InsertAuditLog);
 router.post('/login', (req, res) => {
   console.log(req.body)
   ltmDbConn.query(
-    `SELECT * FROM user WHERE username = ${ltmDbConn.escape(req.body.username)} and password = ${ltmDbConn.escape(req.body.password)};`,
+    `SELECT * FROM legendtime.user WHERE username = ${ltmDbConn.escape(req.body.username)} and password = ${ltmDbConn.escape(req.body.password)};`,
     (err, result) => {
       // user does not exists
       if (err) {

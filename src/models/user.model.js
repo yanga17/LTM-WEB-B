@@ -8,7 +8,7 @@ var User = function (user) {
 };
 
 User.InsertAuditLog = (req, result) => {
-    ltmDbConn.query('INSERT INTO audit_log SET ?', req.body, (err, res) => {
+    ltmDbConn.query('INSERT INTO legendtime.audit_log SET ?', req.body, (err, res) => {
         if (!(err === null)) {
             console.log('Error while inserting data: ' + err);
             result(null, err);
