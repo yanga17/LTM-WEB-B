@@ -1,5 +1,4 @@
 var ltmDbConn = require("../../config/legendTimeDb.config");
-//var dbConn = require("../../config/db.config");
 
 var Customers = function (user) {
     this.uid = user.uid;

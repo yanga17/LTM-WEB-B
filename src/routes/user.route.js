@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-var dbConn = require('../../config/db.config');
+//var dbConn = require('../../config/db.config');
+var ltmDbConn = require('../../config/legendTimeDb.config');
 
 const UserController = require('../controllers/user.controller');
 
@@ -10,8 +11,8 @@ router.post('/insertauditlog', UserController.InsertAuditLog);
 
 router.post('/login', (req, res) => {
   console.log(req.body)
-  dbConn.query(
-    `SELECT * FROM user WHERE username = ${dbConn.escape(req.body.username)} and password = ${dbConn.escape(req.body.password)};`,
+  ltmDbConn.query(
+    `SELECT * FROM user WHERE username = ${ltmDbConn.escape(req.body.username)} and password = ${ltmDbConn.escape(req.body.password)};`,
     (err, result) => {
       // user does not exists
       if (err) {
