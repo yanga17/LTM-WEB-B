@@ -1,6 +1,9 @@
 const mysql = require('mysql');
 require('dotenv').config({ path: './configuration.env' });
 
+console.log(`Host: ${process.env.HOSTDEV}`);
+console.log(`Port: ${process.env.PORT}`);
+
 const dbConn = mysql.createConnection({
     host: process.env.HOSTDEV,
     port: process.env.PORT,
@@ -9,13 +12,13 @@ const dbConn = mysql.createConnection({
     database: process.env.DATABASE
 });
 
-const dbConnLg = mysql.createConnection({
-    host: process.env.LTMHOSTDEV,
-    port: process.env.LTMPORT,
-    user: process.env.LTMUSER,
-    password: process.env.LTMPASSWORD,
-    database: process.env.LTMDATABASE
-});
+// const dbConnLg = mysql.createConnection({
+//     host: process.env.LTMHOSTDEV,
+//     port: process.env.LTMPORT,
+//     user: process.env.LTMUSER,
+//     password: process.env.LTMPASSWORD,
+//     database: process.env.LTMDATABASE
+// });
 
 dbConn.connect(function (error) {
     if (error) {
