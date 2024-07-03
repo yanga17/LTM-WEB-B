@@ -11,7 +11,7 @@ const ltmDbConn = mysql.createConnection({
 
 ltmDbConn.connect(function (error) {
     if (error) {
-        console.error('error connecting:' + error.stack);
+        console.error('error connecting ltm conn:' + error.stack);
         process.exit(1);
     }
     else {
