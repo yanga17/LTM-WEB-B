@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 require('dotenv').config({ path: './configuration.env' });
 
-console.log(`Host: ${process.env.HOSTDEV}`);
-console.log(`Port: ${process.env.PORT}`);
+console.log(`My stupid Host: ${process.env.HOSTDEV}`);
+console.log(`My stupid Port: ${process.env.PORT}`);
 
 const dbConn = mysql.createConnection({
     host: process.env.HOSTDEV,
@@ -22,7 +22,7 @@ const dbConn = mysql.createConnection({
 
 dbConn.connect(function (error) {
     if (error) {
-        console.error('error connecting:' + error.stack);
+        console.error('error connecting DbConn:' + error.message);
         process.exit(1);
     }
     else {
