@@ -1,4 +1,4 @@
-var dbConn = require("../../config/db.config");
+var ltmDbConn = require('../../config/legendTimeDb.config');
 
 var User = function (user) {
     this.emp_id = user.emp_id;
@@ -8,7 +8,7 @@ var User = function (user) {
 };
 
 User.InsertAuditLog = (req, result) => {
-    dbConn.query('INSERT INTO audit_log SET ?', req.body, (err, res) => {
+    ltmDbConn.query('INSERT INTO audit_log SET ?', req.body, (err, res) => {
         if (!(err === null)) {
             console.log('Error while inserting data: ' + err);
             result(null, err);

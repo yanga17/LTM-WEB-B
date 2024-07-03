@@ -2,11 +2,11 @@ const mysql = require('mysql');
 require('dotenv').config({ path: './configuration.env' });
 
 const ltmDbConn = mysql.createConnection({
-    host: process.env.LTMHOSTDEV,
-    port: process.env.LTMPORT,
-    user: process.env.LTMUSER,
-    password: process.env.LTMPASSWORD,
-    database: process.env.LTMDATABASE
+    host: process.env.HOST,
+    port: process.env.PORT,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE
 });
 
 ltmDbConn.connect(function (error) {
