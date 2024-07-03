@@ -1,12 +1,12 @@
 {
-  "name": "internalcheckinbackend",
+  "name": "legend-time-management",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Christo Konidaris",
+  "author": "Yanga Ribisi",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
