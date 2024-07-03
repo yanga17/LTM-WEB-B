@@ -37,7 +37,7 @@ Dashboard.getEmpTicketSummary = (req, result) => {
 }
 
 Dashboard.getCustomerSummary = (req, result) => {
-    ltmDbConn.query("SELECT Customer, Activity AS Error, COUNT(Activity) AS ErrorCount FROM tbltime WHERE EndTime IS NOT NULL AND IssueType = 'Problem' AND Activity IS NOT NULL OR '' AND StartTime >= ?  AND EndTime <= ?  GROUP BY Customer, Activity ORDER BY ErrorCount DESC LIMIT 30", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT Customer, Activity AS Error, COUNT(Activity) AS ErrorCount FROM tbltime WHERE EndTime IS NOT NULL AND IssueType = 'Problem' AND Activity IS NOT NULL OR '' AND StartTime >= ?  AND EndTime <= ?  GROUP BY Customer, Activity ORDER BY ErrorCount DESC LIMIT 20", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting Customer Data Summary:' + err);
             result(null, err);
