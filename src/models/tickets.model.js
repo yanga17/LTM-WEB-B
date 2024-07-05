@@ -67,6 +67,18 @@ Tickets.getEachActiveTicket = (req, result) => {
     })
 }
 
+Tickets.getActiveUserTickets = (req, result) => {
+    ltmDbConn.query('SELECT ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number, StartTime, Support_No, Type, Comments, name as Name, Time_Taken, IssueType, Priority FROM legendtime.tbltime WHERE Employee = ? AND ISNULL(EndTime)', [req.params.employee], (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting the active user tickets:' + err);
+            result(null, err)
+        } else {
+            console.log(res, 'Active User Tickets Result');
+            result(null, res); 
+        }
+    })
+}
+
 //take button in loggedTickets table
 Tickets.insertLoggedTicket = (req, result) => {
     const { employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType, priority } = req.body;
@@ -82,7 +94,7 @@ Tickets.insertLoggedTicket = (req, result) => {
 }
 //take button in loggedTickets table
 Tickets.updateLoggedTicket = (req, result) => {
-    lltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = ?, Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.endtime, req.params.callid], (err, res) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = ?, Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.endtime, req.params.callid], (err, res) => {
         if (err) {
             console.log('Error while updating the specific call:' + err);
             result(err, null);
