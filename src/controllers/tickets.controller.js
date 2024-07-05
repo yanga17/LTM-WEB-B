@@ -48,6 +48,18 @@ exports.getEachActiveTicket = (req, res) => {
   })
 }
 
+exports.getActiveUserTickets = (req, res) => {
+  TicketsModel.getActiveUserTickets(req, (err, user) => {
+    if (err) {
+      user.message = "Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Success";
+    res.send(user);
+  })
+}
+
 exports.insertLoggedTicket = (req, res) => {
   TicketsModel.insertLoggedTicket(req, (err, employee) => {
     if (err) {
