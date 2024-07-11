@@ -19,13 +19,11 @@ router.post('/insertloggedticket', TicketsController.insertLoggedTicket);
 router.patch('/updateloggedticket/:endtime/:callid', TicketsController.updateLoggedTicket);//update takeCallTicket in tblcalls - update - updateCallTicket into tblcalls
 router.patch('/endticket/:employee/:callid', TicketsController.endActiveTicket); //end activeTicket - update into tbltime
 
-
 //getAllCustomers, Problems, Employees, Types
 router.get('/getcustomers', TicketsController.getCustomers);
 router.get('/geterrors', TicketsController.getErrors);
 router.get('/getemployees', TicketsController.getEmployees);
 router.get('/getypes', TicketsController.getTypes);
-
 
 //StartCall insert statement - tblcalls
 router.post('/insertcallticket', TicketsController.insertStartCallTicket);
@@ -45,11 +43,24 @@ router.patch('/updatetransferedticket/:id', TicketsController.updatetransferedTi
 router.post('/insertfollowup', TicketsController.insertFollowUpTicket);
 router.get('/getfollowupticket/:id', TicketsController.getFollowUpTicket); //getTicket based on ID - tbTime
 
+//editTickets - LoggedTickets
+router.patch('/updateloggedcustomer/:customer/:callid', TicketsController.updateLoggedTicketCustomer);
+router.patch('/updateloggedproblem/:problem/:callid', TicketsController.updateLoggedTicketProblem);
+router.patch('/updateloggednumber/:number/:callid', TicketsController.updateLoggedTicketNumber);
+router.patch('/updateloggedname/:name/:callid', TicketsController.updateLoggedTicketName);
+router.patch('/updateloggedanydesk/:anydesk/:callid', TicketsController.updateLoggedTicketAnydesk);
+router.patch('/updateloggedtype/:type/:callid', TicketsController.updateLoggedTicketType);
+router.patch('/updateloggedemployee/:employee/:callid', TicketsController.updateLoggedTicketEmployee);
+router.patch('/updateloggedcomments/:comments/:callid', TicketsController.updateLoggedTicketComments);
+
+//single updateQuery 4 editing tickets
+router.patch('/editloggedticket/:callid', TicketsController.editLoggedTicket);
+
 //geticketSummaries
 router.get('/getasksummary', TicketsController.getTaskSummary);
 router.get('/geterrosummary', TicketsController.getErrorSummary);
 router.get('/getotalsummary', TicketsController.getTotalSummary);
 router.get('/getactivesummary', TicketsController.getActiveTicketSummary);
-
+router.get('/getloggedsummary', TicketsController.getQueuedTicketSummary);
 
 module.exports = router;

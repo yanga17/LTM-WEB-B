@@ -254,6 +254,128 @@ exports.getFollowUpTicket = (req, res) => {
   })
 }
 
+//-----------------------------------------------------
+exports.updateLoggedTicketCustomer = (req, res) => {
+  TicketsModel.updateLoggedTicketCustomer(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Logged Ticket Customer - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Logged Ticket Customer - Success";
+    res.send(user);
+  })
+}
+
+exports.updateLoggedTicketProblem = (req, res) => {
+  TicketsModel.updateLoggedTicketProblem(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Logged Ticket Problem/Error - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Logged Ticket Problem/Error - Success";
+    res.send(user);
+  })
+}
+
+exports.updateLoggedTicketNumber = (req, res) => {
+  TicketsModel.updateLoggedTicketNumber(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Logged Ticket Phone Number - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Logged Ticket Phone Number - Success";
+    res.send(user);
+  })
+}
+
+//editLoggedTickets - Edit ClientName
+exports.updateLoggedTicketName = (req, res) => {
+  TicketsModel.updateLoggedTicketName(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Logged Ticket ClientName - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Logged Ticket ClientName - Success";
+    res.send(user);
+  })
+}
+
+exports.updateLoggedTicketAnydesk = (req, res) => {
+  TicketsModel.updateLoggedTicketAnydesk(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Logged Ticket Anydesk - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Logged Ticket Anydesk - Success";
+    res.send(user);
+  })
+}
+//---
+exports.updateLoggedTicketType = (req, res) => {
+  TicketsModel.updateLoggedTicketType(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Logged Ticket Type - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Logged Ticket Type - Success";
+    res.send(user);
+  })
+}
+
+exports.updateLoggedTicketEmployee = (req, res) => {
+  TicketsModel.updateLoggedTicketEmployee(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Logged Ticket Employee - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Logged Ticket Employee - Success";
+    res.send(user);
+  })
+}
+
+exports.updateLoggedTicketPriority = (req, res) => {
+  TicketsModel.updateLoggedTicketPriority(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Logged Ticket Priority - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Logged Ticket Priority - Success";
+    res.send(user);
+  })
+}
+
+exports.updateLoggedTicketComments = (req, res) => {
+  TicketsModel.updateLoggedTicketComments(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Logged Ticket Comments - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Logged Ticket Comments - Success";
+    res.send(user);
+  })
+}
+
+//edit logged ticket
+exports.editLoggedTicket = (req, res) => {
+  TicketsModel.editLoggedTicket(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Entire Logged Ticket - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Entire Logged Ticket - Success";
+    res.send(user);
+  })
+}
 
 
 //TicketSummary Routes
@@ -295,6 +417,18 @@ exports.getTotalSummary = (req, res) => {
 
 exports.getActiveTicketSummary = (req, res) => {
   TicketsModel.getActiveTicketSummary((err, user) => {
+    if (err) {
+      user.message = "Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Success";
+    res.send(user);
+  })
+}
+
+exports.getQueuedTicketSummary = (req, res) => {
+  TicketsModel.getQueuedTicketSummary((err, user) => {
     if (err) {
       user.message = "Failed";
       res.send(err);

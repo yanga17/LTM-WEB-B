@@ -92,5 +92,27 @@ FollowUps.endActiveFollowUp = (req, result) => {
     });
 }
 
+FollowUps.getUnresolvedTickets = (result) => {
+    ltmDbConn.query("SELECT ID, Customer, name, Email_Address, Phone_Number, EndTime FROM legendtime.tbltime WHERE Completed = '1' AND FollowUp = '1' AND IssueType = 'Problem' AND number_of_days IS NOT NULL AND number_of_days != '' AND DATE_ADD(EndTime, INTERVAL number_of_days DAY) < NOW()", (err, res) => {
+        if (err) {
+            console.log('Error while getting follow-up data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    });
+}
+
+FollowUps.getUnresolvedTicketsTotal = (result) => {
+    ltmDbConn.query("SELECT COUNT(*) AS FollowUpsTotal FROM legendtime.tbltime WHERE Completed = '1' AND FollowUp = '1' AND IssueType = 'Problem' AND number_of_days IS NOT NULL AND number_of_days != '' AND DATE_ADD(EndTime, INTERVAL number_of_days DAY) < NOW()", (err, res) => {
+        if (err) {
+            console.log('Error while getting follow-up data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    });
+}
+
 
 module.exports = FollowUps; 
