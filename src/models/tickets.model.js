@@ -67,6 +67,18 @@ Tickets.getEachActiveTicket = (req, result) => {
     })
 }
 
+Tickets.getActiveUserTickets = (req, result) => {
+    ltmDbConn.query('SELECT ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number, StartTime, Support_No, Type, Comments, name as Name, Time_Taken, IssueType, Priority FROM legendtime.tbltime WHERE Employee = ? AND ISNULL(EndTime)', [req.params.employee], (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting the active user tickets:' + err);
+            result(null, err)
+        } else {
+            console.log(res, 'Active User Tickets Result');
+            result(null, res); 
+        }
+    })
+}
+
 //take button in loggedTickets table
 Tickets.insertLoggedTicket = (req, result) => {
     const { employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType, priority } = req.body;
@@ -82,7 +94,7 @@ Tickets.insertLoggedTicket = (req, result) => {
 }
 //take button in loggedTickets table
 Tickets.updateLoggedTicket = (req, result) => {
-    lltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = ?, Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.endtime, req.params.callid], (err, res) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = ?, Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.endtime, req.params.callid], (err, res) => {
         if (err) {
             console.log('Error while updating the specific call:' + err);
             result(err, null);
@@ -104,6 +116,134 @@ Tickets.endActiveTicket = (req, result) => {
         }
     });
 };
+
+//----- ----- ------ editTickets ----- ----- ----- //
+Tickets.updateLoggedTicketCustomer = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ? WHERE Call_ID = ?', [req.params.customer, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the Logged Customer field:' + err);
+            result(err, null);
+        } else {
+            console.log('Update Logged Customer Field - Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
+Tickets.updateLoggedTicketProblem = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Problem = ? WHERE Call_ID = ?', [req.params.problem, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the Logged Problem field:' + err);
+            result(err, null);
+        } else {
+            console.log('Update Logged Problem Field - Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
+Tickets.updateLoggedTicketNumber = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Phone_Number = ? WHERE Call_ID = ?', [req.params.number, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the Logged Phone Number field:' + err);
+            result(err, null);
+        } else {
+            console.log('Update Logged Phone Number Field - Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
+
+Tickets.updateLoggedTicketName = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET name = ? WHERE Call_ID = ?', [req.params.name, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the Logged ClientName field:' + err);
+            result(err, null);
+        } else {
+            console.log('Update Logged ClientName Field - Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
+Tickets.updateLoggedTicketAnydesk = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Clients_Anydesk = ? WHERE Call_ID = ?', [req.params.anydesk, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the Logged Anydesk field:' + err);
+            result(err, null);
+        } else {
+            console.log('Update Logged Anydesk Field - Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
+Tickets.updateLoggedTicketType = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Type = ? WHERE Call_ID = ?', [req.params.type, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the Logged Type field:' + err);
+            result(err, null);
+        } else {
+            console.log('Update Logged Type Field - Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
+Tickets.updateLoggedTicketEmployee = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Empl = ? WHERE Call_ID = ?', [req.params.employee, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the Logged Employee field:' + err);
+            result(err, null);
+        } else {
+            console.log('Update Logged Employee Field - Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
+Tickets.updateLoggedTicketPriority = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET urgent = ? WHERE Call_ID = ?', [req.params.urgent, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the Logged Priority field:' + err);
+            result(err, null);
+        } else {
+            console.log('Update Logged Employee Priority - Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
+Tickets.updateLoggedTicketComments = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Comments = ? WHERE Call_ID = ?', [req.params.comments, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the Logged Comments field:' + err);
+            result(err, null);
+        } else {
+            console.log('Update Logged Comments Priority - Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
+
+Tickets.editLoggedTicket = (req, result) => {
+    const { customer, problem, number, name, anydesk, type, employee, issueType, comments  } = req.body;
+    const callID = req.params.callid;
+
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ?, Problem = ?, Phone_Number = ?, name = ?, Clients_Anydesk = ?, Type = ?, Empl = ?, IssueType = ?,  Comments = ? WHERE Call_ID = ?', [customer, problem, number, name, anydesk, type, employee, issueType, comments, callID], (err, res) => {
+        if (err) {
+            console.log('Error while editing the entire logged ticket:' + err);
+            result(null, err);
+        } else {
+            console.log('Ticket has been edited successfully:', res);
+            result(null, res);
+        }
+    });
+}
+
+
 
 Tickets.getCustomers = (result) => {
     ltmDbConn.query("SELECT uid, CONCAT(client_name, ',', LEG_num) AS Customer FROM legendtime.clients ORDER BY client_name ASC;", (err, res) => {
@@ -277,6 +417,19 @@ Tickets.insertFollowUpTicket = (req, result) => {
     });
 }
 
+//editTickets ------------------------
+Tickets.updateLoggedTicketCustomer = (req, result) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ? WHERE Call_ID = ?', [req.params.customer, req.params.callid], (err, res) => {
+        if (err) {
+            console.log('Error while updating the logged ticket Customer:' + err);
+            result(err, null);
+        } else {
+            console.log('Updating Logged Customer was Successful:', res);
+            result(null, res);
+        }
+    });
+};
+
 //TicketSummary
 Tickets.getTaskSummary = (result) => {
     ltmDbConn.query('SELECT COUNT(*) AS NumberOfTasks FROM legendtime.tbltime WHERE Completed = "1" AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = "Task" AND DATE(EndTime) = CURDATE()', (err, res) => {
@@ -322,5 +475,15 @@ Tickets.getActiveTicketSummary = (result) => {
     })
 }
 
+Tickets.getQueuedTicketSummary = (result) => {
+    ltmDbConn.query('SELECT COUNT(*) As QueuedTickets FROM legendtime.tblcalls WHERE Taken = 0', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    })
+}
 
 module.exports = Tickets;

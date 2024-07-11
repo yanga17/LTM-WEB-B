@@ -108,7 +108,7 @@ Dashboard.getCommonTasks = (result) => {
 }
 
 Dashboard.getTicketSummary = (result) => {
-    ltmDbConn.query("SELECT (SELECT COUNT(*) FROM legendtime.tbltime WHERE EndTime IS NULL) AS CurrentActiveTickets, (SELECT COUNT(Call_ID) FROM legendtime.tblcalls WHERE Taken = 0) AS CurrentLoggedTickets, (SELECT COUNT(*) FROM legendtime.tbltime WHERE Completed = '1' AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = 'Task' AND DATE(EndTime) = CURDATE()) AS TasksCompleted, (SELECT COUNT(*) FROM legendtime.tbltime WHERE Completed = '1' AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = 'Problem' AND DATE(EndTime) = CURDATE()) AS ErrorsCompleted, (SELECT COUNT(*) FROM legendtime.tbltime WHERE Completed = '1' AND EndTime IS NOT NULL AND Duration IS NOT NULL AND DATE(EndTime) = CURDATE()) AS OvrTicketsCompleted", (err, res) => {
+    ltmDbConn.query("SELECT (SELECT COUNT(*) FROM legendtime.tbltime WHERE EndTime IS NULL) AS CurrentActiveTickets, (SELECT COUNT(Call_ID) FROM legendtime.tblcalls WHERE Taken = 0) AS CurrentLoggedTickets, (SELECT COUNT(*) FROM legendtime.tbltime WHERE Completed = '1' AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = 'Task' AND DATE(EndTime) = CURDATE()) AS TasksCompleted,  (SELECT COUNT(*) FROM legendtime.tbltime WHERE Completed = '1' AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = 'Problem' AND DATE(EndTime) = CURDATE()) AS ErrorsCompleted,  (SELECT COUNT(*) FROM legendtime.tbltime WHERE Completed = '1' AND EndTime IS NOT NULL AND Duration IS NOT NULL AND DATE(EndTime) = CURDATE()) AS OvrTicketsCompleted, (SELECT COUNT(*) FROM legendtime.tblfollowedupcustomers WHERE Completed = '2' AND DATE(FLEndTime) = CURDATE()) AS CompletedFollowUps", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -117,5 +117,6 @@ Dashboard.getTicketSummary = (result) => {
         }
     })
 }
+
 
 module.exports = Dashboard; 
