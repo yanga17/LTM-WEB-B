@@ -7,7 +7,6 @@ require('dotenv').config({ path: './configuration.env' });
 
 //getAll loggedTickets
 router.get('/getickets', TicketsController.getTickets);
-
 //getAll activeTickets || getEach activeTicket using ID - viewInDetail
 router.get('/getactivetickets', TicketsController.getActiveTickets);
 router.get('/getactivetickets/:callid', TicketsController.getEachActiveTicket);
@@ -43,7 +42,7 @@ router.patch('/updatetransferedticket/:id', TicketsController.updatetransferedTi
 router.post('/insertfollowup', TicketsController.insertFollowUpTicket);
 router.get('/getfollowupticket/:id', TicketsController.getFollowUpTicket); //getTicket based on ID - tbTime
 
-//editTickets - LoggedTickets
+//editTickets - LoggedTickets - remove the code
 router.patch('/updateloggedcustomer/:customer/:callid', TicketsController.updateLoggedTicketCustomer);
 router.patch('/updateloggedproblem/:problem/:callid', TicketsController.updateLoggedTicketProblem);
 router.patch('/updateloggednumber/:number/:callid', TicketsController.updateLoggedTicketNumber);

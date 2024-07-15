@@ -114,5 +114,17 @@ FollowUps.getUnresolvedTicketsTotal = (result) => {
     });
 }
 
+FollowUps.startUnresolvedFollowup = (req, result) => {
+    ltmDbConn.query("INSERT INTO legendtime.tblfollowedupcustomers (ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number, StartTime, EndTime, Duration, Type, Solution, Support_No, Comments, FollowUp, Completed, name, NumberOfDays, FLStartTime, IssueType, Priority) VALUES ((SELECT ID FROM legendtime.tbltime WHERE ID = ?), (SELECT Employee FROM legendtime.tbltime WHERE ID = ?), (SELECT Customer FROM legendtime.tbltime WHERE ID = ?), (SELECT Activity FROM legendtime.tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM legendtime.tbltime WHERE ID = ?), (SELECT Phone_Number FROM legendtime.tbltime WHERE ID = ?), (SELECT StartTime FROM legendtime.tbltime WHERE ID = ?), (SELECT EndTime FROM legendtime.tbltime WHERE ID = ?), (SELECT Duration FROM legendtime.tbltime WHERE ID = ?), (SELECT Type FROM legendtime.tbltime WHERE ID = ?), (SELECT Solution FROM legendtime.tbltime WHERE ID = ?), (SELECT Support_No FROM legendtime.tbltime WHERE ID = ?), (SELECT Comments FROM legendtime.tbltime WHERE ID = ?), 2, (SELECT Completed FROM legendtime.tbltime WHERE ID = ?), (SELECT name FROM legendtime.tbltime WHERE ID = ?), (SELECT NumberOfDays FROM legendtime.tbltime WHERE ID = ?), (SELECT FLStartTime FROM legendtime.tbltime WHERE ID = ?), (SELECT IssueType FROM legendtime.tbltime WHERE ID = ?), (SELECT Priority FROM legendtime.tbltime WHERE ID = ?))", [req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id], (err, res) => {
+        if (err) {
+            console.log('Error while transfering the ticket to the next Employee:' + err);
+            result(null, err);
+        } else {
+            console.log('Transfering the ticket to the next Employee was Successful:', res);
+            result(null, res);
+        }
+    });
+}
+
 
 module.exports = FollowUps; 
