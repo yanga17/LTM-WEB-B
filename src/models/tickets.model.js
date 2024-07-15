@@ -22,7 +22,7 @@ var Tickets = function (user) {
 
 
 Tickets.getTickets = (result) => {
-    ltmDbConn.query('SELECT Call_ID, Customer, Problem, Phone_Number, Name, Time, Empl, Support_No, Clients_Anydesk, logger, Comments, urgent, IssueType, Type FROM legendtime.tblcalls WHERE Taken = 0', (err, res) => {
+    ltmDbConn.query('SELECT Call_ID, Customer, Problem, Phone_Number, Name, Time, Empl, Email_Address, Support_No, Clients_Anydesk, logger, Comments, Priority, IssueType, Type FROM legendtime.tblcalls WHERE Taken = 0', (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -68,7 +68,7 @@ Tickets.getEachActiveTicket = (req, result) => {
 }
 
 Tickets.getActiveUserTickets = (req, result) => {
-    ltmDbConn.query('SELECT ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number, StartTime, Support_No, Type, Comments, name as Name, Time_Taken, IssueType, Priority FROM legendtime.tbltime WHERE Employee = ? AND ISNULL(EndTime)', [req.params.employee], (err, res) => {
+    ltmDbConn.query('SELECT ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number, StartTime, Support_No, Type, Comments, name as Name, Email_Address, Time_Taken, IssueType, Priority FROM legendtime.tbltime WHERE Employee = ? AND ISNULL(EndTime)', [req.params.employee], (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting the active user tickets:' + err);
             result(null, err)
@@ -81,8 +81,8 @@ Tickets.getActiveUserTickets = (req, result) => {
 
 //take button in loggedTickets table
 Tickets.insertLoggedTicket = (req, result) => {
-    const { employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType, priority } = req.body;
-    ltmDbConn.query('INSERT INTO legendtime.tbltime (Employee, Customer, Activity, Phone_Number, Clients_Anydesk, StartTime, Type, Support_No, Comments, Name, Time_Taken, IssueType, Priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, timeTaken, issueType, priority], (err, res) => {
+    const { employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, email_address, timeTaken, issueType, priority } = req.body;
+    ltmDbConn.query('INSERT INTO legendtime.tbltime (Employee, Customer, Activity, Phone_Number, Clients_Anydesk, StartTime, Type, Support_No, Comments, Name, Email_Address, Time_Taken, IssueType, Priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, supportNo, comments, name, email_address, timeTaken, issueType, priority], (err, res) => {
         if (err) {
             console.log('Error while inserting the logged ticket into ActiveTickets Table:' + err);
             result(null, err);
@@ -229,10 +229,10 @@ Tickets.updateLoggedTicketComments = (req, result) => {
 
 
 Tickets.editLoggedTicket = (req, result) => {
-    const { customer, problem, number, name, anydesk, type, employee, issueType, comments  } = req.body;
+    const { customer, problem, number, name, email, anydesk, type, employee, issueType, comments  } = req.body;
     const callID = req.params.callid;
 
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ?, Problem = ?, Phone_Number = ?, name = ?, Clients_Anydesk = ?, Type = ?, Empl = ?, IssueType = ?,  Comments = ? WHERE Call_ID = ?', [customer, problem, number, name, anydesk, type, employee, issueType, comments, callID], (err, res) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ?, Problem = ?, Phone_Number = ?, name = ?, Email_Address = ?, Clients_Anydesk = ?, Type = ?, Empl = ?, IssueType = ?,  Comments = ? WHERE Call_ID = ?', [customer, problem, number, name, email, anydesk, type, employee, issueType, comments, callID], (err, res) => {
         if (err) {
             console.log('Error while editing the entire logged ticket:' + err);
             result(null, err);
@@ -293,8 +293,8 @@ Tickets.getTypes = (result) => {
 }
 
 Tickets.insertStartCallTicket = (req, result) => {
-    const { customer, problem, time, phoneNumber, clientsAnydesk, name, support_no, empl, logger, comments, urgent, issueType, type } = req.body;
-    ltmDbConn.query('INSERT into legendtime.tblcalls(Customer, Problem, Time, Phone_Number, Clients_Anydesk, Name, Support_No, Empl, logger, Comments, urgent, IssueType, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, time, phoneNumber, clientsAnydesk, name, support_no, empl, logger, comments, urgent, issueType, type], (err, res) => {
+    const { customer, problem, time, phoneNumber, clientsAnydesk, name, email_address,support_no, empl, logger, comments, priority, issueType, type } = req.body;
+    ltmDbConn.query('INSERT into legendtime.tblcalls(Customer, Problem, Time, Phone_Number, Clients_Anydesk, Name, Email_Address, Support_No, Empl, logger, Comments, Priority, IssueType, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, time, phoneNumber, clientsAnydesk, name, email_address, support_no, empl, logger, comments, priority, issueType, type], (err, res) => {
         if (err) {
             console.log('Error while inserting call ticket:' + err);
             result(null, err);
@@ -356,8 +356,8 @@ Tickets.deleteLoggedTicket = (req, result) => {
 
 
 Tickets.insertStartActiveTicket = (req, result) => {
-    const { employee, customer, name,  activity, startTime, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType } = req.body;
-    ltmDbConn.query('INSERT into legendtime.tbltime(Employee, Customer, Name,  Activity, StartTime, Type, Support_No, Phone_Number, Clients_Anydesk, Comments, IssueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [employee, customer, name,  activity, startTime, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType], (err, res) => {
+    const { employee, customer, name, email_address, activity, startTime, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType } = req.body;
+    ltmDbConn.query('INSERT into legendtime.tbltime(Employee, Customer, Name,  Email_Address, Activity, StartTime, Type, Support_No, Phone_Number, Clients_Anydesk, Comments, IssueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [employee, customer, name, email_address, activity, startTime, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType], (err, res) => {
         if (err) {
             console.log('Error while inserting active ticket:' + err);
             result(null, err);
@@ -369,7 +369,7 @@ Tickets.insertStartActiveTicket = (req, result) => {
 }
 
 Tickets.transferTicket = (req, result) => {
-    ltmDbConn.query("INSERT INTO tblcalls(Customer, Problem, Clients_Anydesk, Phone_Number, name, Time, Support_No, Empl, Comments, IssueType, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), ?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
+    ltmDbConn.query("INSERT INTO tblcalls (Customer, Problem, Clients_Anydesk, Phone_Number, name, Email_Address, Time, Support_No, Empl, Comments, IssueType, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), (SELECT Email_Address FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), ?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
         if (err) {
             console.log('Error while transfering the ticket to the next Employee:' + err);
             result(null, err);

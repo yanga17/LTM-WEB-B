@@ -91,3 +91,15 @@ exports.getUnresolvedTicketsTotal = (req, res) => {
           res.send(user);
       })
 }
+
+exports.startUnresolvedFollowup = (req, res) => {
+  FollowUpsModel.startUnresolvedFollowup(req, (err, user) => {
+    if (err) {
+      user.message = "Starting an immediate Unresolved Follow-Up - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+      user.message = "Starting an immediate Unresolved Follow-Up - Success";
+      res.send(user);
+  })
+}
