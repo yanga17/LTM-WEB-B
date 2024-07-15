@@ -20,5 +20,6 @@ router.patch('/endactivefollowup/:idx', FollowUpsController.endActiveFollowUp);
 
 router.get('/getunresolvedtickets', FollowUpsController.getUnresolvedTickets);
 router.get('/getunresolvedticketstotal', FollowUpsController.getUnresolvedTicketsTotal);
+router.post('/startunresolvedfollowup/:id', FollowUpsController.startUnresolvedFollowup);
 
 module.exports = router;
