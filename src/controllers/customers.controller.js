@@ -49,3 +49,15 @@ exports.getTechnicians = (req, res) => {
       res.send(user);
     })
   }
+
+exports.getCustomersTotal = (req, res) => {
+    CustomersModel.getCustomersTotal((err, user) => {
+        if (err) {
+            user.message = "Failed";
+            res.send(err);
+            process.exit(1);
+        }
+            user.message = "Success";
+            res.send(user);
+        })
+}

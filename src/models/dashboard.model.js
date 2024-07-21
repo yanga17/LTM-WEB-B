@@ -85,7 +85,7 @@ Dashboard.getClientSummary = (result) => {
 
 //commonErrorsGrid
 Dashboard.getCommonErrors = (result) => {
-    ltmDbConn.query("SELECT Activity, COUNT(Activity) AS CommonErrors FROM legendtime.tbltime GROUP BY Activity ORDER BY CommonErrors DESC LIMIT 5;", (err, res) => {
+    ltmDbConn.query("SELECT Problem, COUNT(Problem) AS CommonErrors FROM legendtime.tblcalls WHERE Problem <> '' GROUP BY Problem ORDER BY CommonErrors DESC LIMIT 5", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -97,7 +97,7 @@ Dashboard.getCommonErrors = (result) => {
 
 //CommonTasksGrid
 Dashboard.getCommonTasks = (result) => {
-    ltmDbConn.query("SELECT Activity, COUNT(Activity) AS CommonTasks FROM legendtime.tbltime where IssueType = 'Task' GROUP BY Activity ORDER BY CommonTasks DESC LIMIT 5;", (err, res) => {
+    ltmDbConn.query("SELECT Problem, COUNT(Problem) AS CommonTasks FROM legendtime.tblcalls where IssueType = 'Task' GROUP BY Problem ORDER BY CommonTasks DESC LIMIT 5", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -116,6 +116,30 @@ Dashboard.getTicketSummary = (result) => {
             result(null, res);
         }
     })
+}
+
+Dashboard.getEmployees = (result) => {
+    ltmDbConn.query('SELECT ID, Technician FROM legendtime.tbltechnicians order by Technician', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting employees: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+
+    })
+}
+
+Dashboard.getEmployeeWeeklySummary = (req, result) => {
+    ltmDbConn.query("SELECT ID, Employee, SUM(CASE WHEN DAYNAME(EndTime) = 'Monday' THEN 1 ELSE 0 END) AS Monday, SUM(CASE WHEN DAYNAME(EndTime) = 'Tuesday' THEN 1 ELSE 0 END) AS Tuesday, SUM(CASE WHEN DAYNAME(EndTime) = 'Wednesday' THEN 1 ELSE 0 END) AS Wednesday, SUM(CASE WHEN DAYNAME(EndTime) = 'Thursday' THEN 1 ELSE 0 END) AS Thursday, SUM(CASE WHEN DAYNAME(EndTime) = 'Friday' THEN 1 ELSE 0 END) AS Friday, SUM(CASE WHEN DAYNAME(EndTime) = 'Saturday' THEN 1 ELSE 0 END) AS Saturday, SUM(CASE WHEN DAYNAME(EndTime) = 'Sunday' THEN 1 ELSE 0 END) AS Sunday, COUNT(*) AS OverallTotal FROM legendtime.tbltime WHERE EndTime BETWEEN ? AND ? GROUP BY Employee ORDER BY Employee ASC", [req.params.starttime, req.params.endtime], (err, res) => {
+        if (err) {
+            console.log('Error while getting the Employee Summary Report Data:' + err);
+            result(null, err);
+        } else {
+            console.log('Fetching the Employee Summary Report was Successful:', res);
+            result(null, res);
+        }
+    });
 }
 
 

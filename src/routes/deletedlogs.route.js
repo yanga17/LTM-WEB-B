@@ -10,5 +10,6 @@ router.get(`/getdeletedlogs`, DeletedLogsController.getDeletedLogs);
 router.post('/insertcallticket', DeletedLogsController.undoCallTicket);
 router.delete('/deleteticket/:idx', DeletedLogsController.deleteTicketLog);
 
+router.get(`/getdeletedlogstotal`, DeletedLogsController.getDeletedLogsTotal);
 
 module.exports = router;

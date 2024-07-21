@@ -22,7 +22,7 @@ var FollowUps = function (user) {
 };
 
 FollowUps.getFollowUps = (result) => {
-    ltmDbConn.query("SELECT ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number, StartTime, EndTime, Duration, Type, Solution, Support_No, Comments, FollowUp, Completed, name, number_of_days, IssueType, Priority FROM legendtime.tbltime WHERE Completed = '1' AND FollowUp = '1' AND  IssueType = 'Problem' AND number_of_days IS NOT NULL or ''", (err, res) => {
+    ltmDbConn.query("SELECT ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number, StartTime, EndTime, Duration, Type, Solution, Support_No, Comments, FollowUp, Completed, name, Email_Address, number_of_days, IssueType, Priority FROM legendtime.tbltime WHERE Completed = '1' AND FollowUp = '1' AND  IssueType = 'Problem' AND number_of_days IS NOT NULL or ''", (err, res) => {
         if (err) {
             console.log('Error while getting follow-up data: ' + err);
             result(null, err);

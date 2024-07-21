@@ -33,3 +33,15 @@ exports.deleteTicketLog = (req, res) => {
       }
     });
   }
+
+exports.getDeletedLogsTotal = (req, res) => {
+  DeletedLogsModel.getDeletedLogsTotal((err, user) => {
+      if (err) {
+          user.message = "Failed";
+          res.send(err);
+          process.exit(1);
+      }
+          user.message = "Success";
+          res.send(user);
+      })
+}

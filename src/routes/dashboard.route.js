@@ -20,4 +20,7 @@ router.get('/getcommonerrors', DashboardController.getCommonErrors);
 router.get('/getcommontasks', DashboardController.getCommonTasks);
 router.get('/geticketsummary', DashboardController.getTicketSummary);
 
+router.get('/getemployees', DashboardController.getEmployees);
+router.get('/getemployeeweeklydata/:starttime/:endtime', DashboardController.getEmployeeWeeklySummary);
+
 module.exports = router;

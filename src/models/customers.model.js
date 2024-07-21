@@ -63,4 +63,15 @@ Customers.getTechnicians = (result) => {
     })
 }
 
+Customers.getCustomersTotal = (result) => {
+    ltmDbConn.query("SELECT COUNT(DISTINCT client_name) as TotalClients FROM legendtime.clients", (err, res) => {
+        if (err) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    });
+}
+
 module.exports = Customers;

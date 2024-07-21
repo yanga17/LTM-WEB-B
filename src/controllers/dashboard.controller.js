@@ -97,3 +97,27 @@ exports.getTicketSummary = (req, res) => {
     res.send(user);
   })
 }
+
+exports.getEmployees = (req, res) => {
+  DashboardModel.getEmployees((err, user) => {
+    if (err) {
+      user.message = "Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Success";
+    res.send(user);
+  })
+}
+
+exports.getEmployeeWeeklySummary = (req, res) => {
+  DashboardModel.getEmployeeWeeklySummary(req, (err, user) => {
+  if (err) {
+    user.message = "Employee Weekly Summary Data - Failed";
+    res.send(err);
+    process.exit(1);
+  }
+  user.message = "Employee Weekly Summary Data - Success";
+  res.send(user);
+})
+}
