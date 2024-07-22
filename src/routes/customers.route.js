@@ -13,4 +13,6 @@ router.get('/getcustomer/:uid', ClientsController.getEachCustomer);
 router.get('/getsearchedcustomer/:clientname', ClientsController.getSearchedCustomer);
 router.get('/getechnicians', ClientsController.getTechnicians);
 
+router.get('/getcustomerstotal', ClientsController.getCustomersTotal);
+
 module.exports = router;

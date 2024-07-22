@@ -55,4 +55,15 @@ DeletedLogs.deleteTicketLog = (req, result) => {
     });
 }
 
+DeletedLogs.getDeletedLogsTotal = (result) => {
+    ltmDbConn.query("SELECT COUNT(*) as DeletedLogsTotal FROM legendtime.deletedlogs", (err, res) => {
+        if (err) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    });
+}
+
 module.exports = DeletedLogs;
