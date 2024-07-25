@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { sendEmail } = require('./sendEmails')
+const { sendSMS } = require('./sendSMS')
 
 const corsOptions = {
     origin: '*',
@@ -47,6 +49,30 @@ app.use('/dashboard', DashboardRoutes);
 
 const ReportsRoutes = require('./src/routes/reports.route')
 app.use('/reports', ReportsRoutes);
+
+app.post('/send-email', async (req, res) => {
+    const { callid } = req.body; // Get callid from the request body
+    try {
+        await sendEmail(callid);
+        res.status(200).send("Email sent successfully!");
+    } catch (error) {
+        console.error('Error sending email', error);
+        res.status(500).send('Error sending email');
+    }
+})
+
+app.post('/send-sms', async (req, res) => {
+    const { clientName, phonenumber } = req.body;
+
+    try {
+        await sendSMS(clientName, phonenumber);
+        res.status(200).send("SMS sent successfully!");
+    } catch (error) {
+        console.error('Error sending sms', error);
+        res.status(500).send('Error sending sms');
+    }
+})
+
 // listen to the port
 app.listen(port, () => {
     console.log(`Express is running at port ${port}`);
