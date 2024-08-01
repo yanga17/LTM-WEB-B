@@ -8,7 +8,7 @@ node_modules/
 dist/
 
 #env file
-.configuraton.env
+.configuration.env
 
 # Compiled Java class files
 *.class
