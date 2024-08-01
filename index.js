@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { sendEmail } = require('./sendEmails')
 const { sendSMS } = require('./sendSMS')
+const { handler } = require("./src/controllers/index")
+
 
 const corsOptions = {
     origin: '*',
@@ -72,6 +74,19 @@ app.post('/send-sms', async (req, res) => {
         res.status(500).send('Error sending sms');
     }
 })
+
+app.post("*", async (req, res) => {
+    console.log(req.body);
+    // res.send("HELLO POST");
+    res.send(await handler(req, "POST"));
+})
+
+app.get("*", async (req, res) => {
+    console.log(req.body);
+    // res.send("HELLO GET");
+    res.send(await handler(req, "GET"));
+})
+
 
 // listen to the port
 app.listen(port, () => {

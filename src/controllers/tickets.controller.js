@@ -364,7 +364,7 @@ exports.updateLoggedTicketComments = (req, res) => {
   })
 }
 
-//edit logged ticket
+//edit logged ticket - 
 exports.editLoggedTicket = (req, res) => {
   TicketsModel.editLoggedTicket(req, (err, user) => {
     if (err) {
@@ -373,6 +373,18 @@ exports.editLoggedTicket = (req, res) => {
       process.exit(1);
     }
     user.message = "Updating the Entire Logged Ticket - Success";
+    res.send(user);
+  })
+}
+
+exports.editActiveTicket = (req, res) => {
+  TicketsModel.editActiveTicket(req, (err, user) => {
+    if (err) {
+      user.message = "Updating the Entire Active Ticket - Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Updating the Entire Active Ticket - Success";
     res.send(user);
   })
 }

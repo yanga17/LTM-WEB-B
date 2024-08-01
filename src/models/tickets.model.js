@@ -243,6 +243,21 @@ Tickets.editLoggedTicket = (req, result) => {
     });
 }
 
+Tickets.editActiveTicket = (req, result) => {
+    const { customer, problem, number, name, email, anydesk, type, employee, issueType, comments  } = req.body;
+    const id = req.params.id;
+
+    ltmDbConn.query('UPDATE legendtime.tbltime SET Customer = ?, Activity = ?, Phone_Number = ?, name = ?, Email_Address = ?, Clients_Anydesk = ?, Type = ?, Employee = ?, IssueType = ?,  Comments = ? WHERE ID = ?', [customer, problem, number, name, email, anydesk, type, employee, issueType, comments, id], (err, res) => {
+        if (err) {
+            console.log('Error while editing the entire Active ticket:' + err);
+            result(null, err);
+        } else {
+            console.log('Active Ticket has been edited successfully:', res);
+            result(null, res);
+        }
+    });
+}
+
 
 
 Tickets.getCustomers = (result) => {
