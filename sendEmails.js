@@ -2,7 +2,8 @@ const nodemailer = require("nodemailer");
 const user = "yangagovuza@gmail.com";
 const password = "moneybags888_";
 const path = require("path"); // Import the path module
-var ltmDbConn = require("../LTM-WEB-b/config/legendTimeDb.config");
+//var ltmDbConn = require("../LTM-WEB-b/config/legendTimeDb.config");
+const ltmDbConn = require('./config/legendTimeDb.config');
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
