@@ -6,6 +6,10 @@ const ltmDbConn = require('./config/legendTimeDb.config');
 const accountSID = process.env.TWILIO_ACC_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
 
+if (!accountSID || !authToken) {
+    throw new Error('Twilio account SID and auth token are required');
+}
+
 const client = require('twilio')(accountSID, authToken);
 
 const formatPhoneNumber = (phoneNumber) => {
