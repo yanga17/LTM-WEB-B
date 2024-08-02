@@ -24,7 +24,7 @@ async function saveInfo(data) {
     try {
         const results = await new Promise((resolve, reject) => {
             ltmDbConn.query(
-                `INSERT INTO tblcalls(Customer, Problem, Name, Phone_Number, Email_Address, Clients_Anydesk) VALUES (?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO tblcalls(Customer, Problem, Name, Phone_Number, Time, Email_Address, Clients_Anydesk) VALUES (?, ?, ?, ?, NOW(), ?, ?)`,
                 [Customer, Problem, Name, Phone_Number, Email_Address, Clients_Anydesk],
                 (error, results) => {
                     if (error) {
@@ -38,6 +38,29 @@ async function saveInfo(data) {
         return results;
     } catch (error) {
         errorHandler(error, "saveInfo", "database");
+        return null;
+    }
+}
+
+
+async function returnCallID(name, email) {
+    try {
+        const results = await new Promise((resolve, reject) => {
+            ltmDbConn.query(
+                `SELECT Call_ID FROM legendtime.tblcalls WHERE name = ? AND Email_Address = ?`,
+                [name, email],
+                (error, results) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    console.log('Query ReturnCallId Results:', results);
+                    resolve(results);
+                }
+            );
+        });
+        return results;
+    } catch (error) {
+        errorHandler(error, "returnCallID", "database");
         return null;
     }
 }
@@ -98,8 +121,13 @@ async function handleMessage(messageObj) {
                             Email_Address: userState.email,
                             Clients_Anydesk: userState.anydesk
                         });
+
+                        const callIdResults = await returnCallID(userState.name, userState.email);
                         state[chatId] = {}; // Clear the state after saving
-                        return sendMessage(chatId, "All the information has been retrieved and saved successfully. Thank you!");
+                        
+                        //const callId = callIdResults?.Call_ID || "not found";
+                        const callId = callIdResults && callIdResults.length > 0 ? callIdResults[0].Call_ID : "not found";
+                        return sendMessage(chatId, `All the information has been retrieved and saved successfully. Thank you! Your Call ID is ${callId}.`);
                     } else {
                         return sendMessage(chatId, "Some information is missing. Please ensure all fields are filled before completing.");
                     }
