@@ -1,6 +1,7 @@
 require('dotenv').config({ path: './configuration.env' });
 //const twilio = require('twilio');
-var ltmDbConn = require("../LTM-WEB-b/config/legendTimeDb.config");
+//var ltmDbConn = require("../LTM-WEB-b/config/legendTimeDb.config");
+const ltmDbConn = require('./config/legendTimeDb.config');
 
 const accountSID = process.env.TWILIO_ACC_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
