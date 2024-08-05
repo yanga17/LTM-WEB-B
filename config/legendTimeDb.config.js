@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-require('dotenv').config({ path: './configuration.env' });
+require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
 const ltmDbConn = mysql.createConnection({
     host: process.env.HOST,

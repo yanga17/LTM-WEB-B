@@ -3,7 +3,7 @@ const router = express.Router();
 
 const TicketsController = require('../controllers/tickets.controller');
 
-require('dotenv').config({ path: './configuration.env' });
+require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
 //getAll loggedTickets
 router.get('/getickets', TicketsController.getTickets);

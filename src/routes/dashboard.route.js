@@ -3,7 +3,7 @@ const router = express.Router();
 
 const DashboardController = require('../controllers/dashboard.controller');
 
-require('dotenv').config({ path: './configuration.env' });
+require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
 //EmployeeBarChart
 router.get('/getempsummary/:starttime/:endtime', DashboardController.getEmpTicketSummary);

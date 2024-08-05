@@ -1,4 +1,5 @@
-require('dotenv').config({ path: './configuration.env' });
+//require('dotenv').config({ path: './.configuration.env' });
+require('dotenv').config({ path: '.configuration.env' });
 //const twilio = require('twilio');
 //var ltmDbConn = require("../LTM-WEB-b/config/legendTimeDb.config");
 const ltmDbConn = require('./config/legendTimeDb.config');

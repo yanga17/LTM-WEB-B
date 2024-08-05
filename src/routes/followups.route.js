@@ -3,7 +3,7 @@ const router = express.Router();
 
 const FollowUpsController = require('../controllers/followups.controller');
 
-require('dotenv').config({ path: './configuration.env' });
+require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
 //fromTime
 router.get(`/getfollowups`, FollowUpsController.getFollowUps);

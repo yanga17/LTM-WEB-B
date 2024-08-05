@@ -13,7 +13,8 @@ const corsOptions = {
 }
 
 //.ENV
-require('dotenv').config({ path: './configuration.env' });
+//require('dotenv').config({ path: './.configuration.env' });
+require('dotenv').config({ path: '.configuration.env' });
 
 //require('dotenv').config({ path: './configurationLtm.env' });
 
@@ -86,6 +87,9 @@ app.get("*", async (req, res) => {
     // res.send("HELLO GET");
     res.send(await handler(req, "GET"));
 })
+
+console.log("ENVIRONMENTAL VARIABLES:", process.env); // This will log all environment variables to the console.
+
 
 
 // listen to the port

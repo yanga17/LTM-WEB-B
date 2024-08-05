@@ -3,7 +3,7 @@ const router = express.Router();
 
 const ReportsController = require('../controllers/reports.controller');
 
-require('dotenv').config({ path: './configuration.env' });
+require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
 
 router.get('/getclienthistorydata/:starttime/:endtime', ReportsController.getClientHistoryReport);

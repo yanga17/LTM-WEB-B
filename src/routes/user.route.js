@@ -5,7 +5,7 @@ var ltmDbConn = require('../../config/legendTimeDb.config');
 
 const UserController = require('../controllers/user.controller');
 
-require('dotenv').config({ path: './configuration.env' });
+require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
 router.post('/insertauditlog', UserController.InsertAuditLog);
 
