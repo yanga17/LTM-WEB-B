@@ -64,17 +64,17 @@ app.post('/send-email', async (req, res) => {
     }
 })
 
-app.post('/send-sms', async (req, res) => {
-    const { clientName, phonenumber } = req.body;
+// app.post('/send-sms', async (req, res) => {
+//     const { clientName, phonenumber } = req.body;
 
-    try {
-        await sendSMS(clientName, phonenumber);
-        res.status(200).send("SMS sent successfully!");
-    } catch (error) {
-        console.error('Error sending sms', error);
-        res.status(500).send('Error sending sms');
-    }
-})
+//     try {
+//         await sendSMS(clientName, phonenumber);
+//         res.status(200).send("SMS sent successfully!");
+//     } catch (error) {
+//         console.error('Error sending sms', error);
+//         res.status(500).send('Error sending sms');
+//     }
+// })
 
 app.post("*", async (req, res) => {
     console.log(req.body);
@@ -88,7 +88,9 @@ app.get("*", async (req, res) => {
     res.send(await handler(req, "GET"));
 })
 
-console.log("ENVIRONMENTAL VARIABLES:", process.env); // This will log all environment variables to the console.
+// // console.log("ENVIRONMENTAL VARIABLES:", process.env); // This will log all environment variables to the console.
+// console.log('TWILIO_SID:', process.env.TWILIO_SID);
+// console.log('TWILIO_AUTH_TOKEN:', process.env.TWILIO_AUTH_TOKEN);
 
 
 
