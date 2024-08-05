@@ -1,6 +1,7 @@
 const { getAxiosInstance } = require("./axios");
 const { errorHandler } = require("./helper");
-var ltmDbConn = require("../../../../LTM-WEB-b/config/legendTimeDb.config");
+const ltmDbConn = require('../../../config/legendTimeDb.config'); 
+
 
 const MY_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const BASE_URL = `https://api.telegram.org/bot${MY_TOKEN}`;
