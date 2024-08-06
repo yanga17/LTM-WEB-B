@@ -97,6 +97,18 @@ exports.endActiveTicket = (req, res) => {
   })
 }
 
+exports.endActiveTicketDetail = (req, res) => {
+  TicketsModel.endActiveTicketDetail(req, (err, user) => {
+    if (err) {
+      user.message = "Failed";
+      res.send(err);
+      process.exit(1);
+    }
+    user.message = "Success";
+    res.send(user);
+  })
+}
+
 exports.getCustomers = (req, res) => {
   TicketsModel.getCustomers((err, user) => {
     if (err) {
