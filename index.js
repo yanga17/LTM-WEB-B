@@ -88,7 +88,7 @@ app.get("*", async (req, res) => {
     res.send(await handler(req, "GET"));
 })
 
-// // console.log("ENVIRONMENTAL VARIABLES:", process.env); // This will log all environment variables to the console.
+// console.log("ENVIRONMENTAL VARIABLES:", process.env); // This will log all environment variables to the console.
 // console.log('TWILIO_SID:', process.env.TWILIO_SID);
 // console.log('TWILIO_AUTH_TOKEN:', process.env.TWILIO_AUTH_TOKEN);
 
