@@ -285,7 +285,7 @@ Tickets.getCustomers = (result) => {
 } 
 
 Tickets.getErrors = (result) => {
-    ltmDbConn.query('SELECT idx, Errors FROM legendtime.tblcustomererrors', (err, res) => {
+    ltmDbConn.query('SELECT idx, Errors FROM legendtime.tblcustomererrors ORDER BY Errors ASC', (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -309,7 +309,7 @@ Tickets.getEmployees = (result) => {
 }
 
 Tickets.getTypes = (result) => {
-    ltmDbConn.query('SELECT Type FROM legendtime.tbltype', (err, res) => {
+    ltmDbConn.query('SELECT Type FROM legendtime.tbltype ORDER BY Type ASC', (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);

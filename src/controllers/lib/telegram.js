@@ -152,17 +152,18 @@ async function handleMessage(messageObj) {
                 const clientExists = await checkClient(chatId);
 
                 if (clientExists && clientExists.length > 0) {
+                    const { name, surname } = clientExists[0];
+                    //const fullName = `${name} ${surname}`.trim();
                     // Client exists, restrict to "problem" and "email" commands
-                    return sendMessage(chatId, "Welcome back to Legends Telegram Ticket Management. Please select the Problem Command and enter the error you're dealing with.\n\n" +
+                    return sendMessage(chatId, `Welcome back to Legends Telegram Ticket Management ${name}. Please select the problem command and enter the error you're dealing with.\n\n` +
                         "Step 1: Select The Command\n" +
                         "Step 2: Enter the required information\n\n" +
                         "/problem - Enter the error you're having troubles with\n" +
-                        // "/email - Enter your email address\n" +
                         "/complete - Once the error has been entered for the command, use this command to log the ticket to the Technicians"
                     );
                 } else {
                     // New client, allow all commands
-                    return sendMessage(chatId, "Hi! This is Legends Telegram Ticket Management Bot. Please select the available commands and provide the required information for each command before logging the ticket with the company.\n\n" +
+                    return sendMessage(chatId, "Hi! This is Legends Telegram Ticket Management Bot. This is an automated self-service program designed for clients to log tickets directly to our company technicians. Please select the available commands and provide the required information for each command before submitting your ticket.\n\n" +
                         "Step 1: Select The Command\n" +
                         "Step 2: Enter the required information\n\n" +
                         "/company - Enter the company name\n" +
@@ -183,15 +184,6 @@ async function handleMessage(messageObj) {
                     return sendMessage(chatId, "Please enter the full name of the company");
                 
                 case "problem":
-
-                    //check if the client exists first:
-                    // const checkclientExists = await checkClient(chatId);
-                    // if (checkclientExists && checkclientExists.length > 0) {
-                    //     //const callId = callIdResults && callIdResults.length > 0 ? callIdResults[0].Call_ID : "not found";
-                    //     const name = clientExists.length > 0 ? clientExists[0].name : "not";
-                    //     return sendMessage(chatId, `Please explain the error you have encountered "${name}". Keep it short but very descriptive`);
-                    // }
-
                     state[chatId].command = "problem";  // Set the state to expect problem description
                     return sendMessage(chatId, "Please explain the error you have encountered. Keep it short but very descriptive");
 
@@ -228,7 +220,8 @@ async function handleMessage(messageObj) {
                         const callId = callIdResults.length > 0 ? callIdResults[0].Call_ID : null;
                         delete state[chatId];
 
-                        return sendMessage(chatId, `Existing User Ticket has been logged successfully ${clientExists[0].name}. Your reference number is: ${callId}. A Technician will contact you shortly regarding the error.`);
+                        //return sendMessage(chatId, `Existing User Ticket has been logged successfully ${clientExists[0].name}. Your reference number is: ${callId}. A Technician will contact you shortly regarding the error.`);
+                        return sendMessage(chatId, `Ticket has been logged successfully. Your reference number is: ${callId}. A Technician will contact you shortly regarding the error.`);
                     } else {
                         const userState = state[chatId];
 
