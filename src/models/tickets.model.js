@@ -383,8 +383,8 @@ Tickets.deleteLoggedTicket = (req, result) => {
 
 
 Tickets.insertStartActiveTicket = (req, result) => {
-    const { employee, customer, name, email_address, activity, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType } = req.body;
-    ltmDbConn.query('INSERT into legendtime.tbltime(Employee, Customer, Name,  Email_Address, Activity, StartTime, Type, Support_No, Phone_Number, Clients_Anydesk, Comments, Time_Taken, IssueType) VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, NOW(), ?)', [employee, customer, name, email_address, activity, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType], (err, res) => {
+    const { employee, customer, name, email_address, activity, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType, priority } = req.body;
+    ltmDbConn.query('INSERT into legendtime.tbltime(Employee, Customer, Name,  Email_Address, Activity, StartTime, Type, Support_No, Phone_Number, Clients_Anydesk, Comments, Time_Taken, IssueType, Priority) VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, NOW(), ?, ?)', [employee, customer, name, email_address, activity, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType, priority], (err, res) => {
         if (err) {
             console.log('Error while inserting active ticket:' + err);
             result(null, err);

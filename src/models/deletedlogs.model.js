@@ -7,6 +7,7 @@ var DeletedLogs = function (user) {
     this.Customer = user.customer,
     this.Problem = user.problem,
     this.Client_Name = user.clientName,
+    this.Email_Address = user.emailAddress,
     this.Phone_Number = user.PhoneNumber,
     this.Start_Time = user.startTime,
     this.End_Time = user.endTime,
@@ -20,7 +21,7 @@ var DeletedLogs = function (user) {
 };
 
 DeletedLogs.getDeletedLogs = (result) => {
-    ltmDbConn.query("SELECT idx, Call_ID, Employee, Customer, Problem, Client_Name, Phone_Number, Start_Time, End_Time, SupportNumber, Priority, IssueType, Type, Comments, insertion_time, Reason FROM legendtime.deletedlogs", (err, res) => {
+    ltmDbConn.query("SELECT idx, Call_ID, Employee, Customer, Problem, Client_Name, Email_Address, Phone_Number, Start_Time, End_Time, SupportNumber, Priority, IssueType, Type, Comments, insertion_time, Reason FROM legendtime.deletedlogs", (err, res) => {
         if (err) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
