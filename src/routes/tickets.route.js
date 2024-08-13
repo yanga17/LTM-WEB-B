@@ -43,16 +43,6 @@ router.patch('/updatetransferedticket/:id', TicketsController.updatetransferedTi
 router.post('/insertfollowup', TicketsController.insertFollowUpTicket);
 router.get('/getfollowupticket/:id', TicketsController.getFollowUpTicket); //getTicket based on ID - tbTime
 
-//editTickets - LoggedTickets - remove the code
-// router.patch('/updateloggedcustomer/:customer/:callid', TicketsController.updateLoggedTicketCustomer);
-// router.patch('/updateloggedproblem/:problem/:callid', TicketsController.updateLoggedTicketProblem);
-// router.patch('/updateloggednumber/:number/:callid', TicketsController.updateLoggedTicketNumber);
-// router.patch('/updateloggedname/:name/:callid', TicketsController.updateLoggedTicketName);
-// router.patch('/updateloggedanydesk/:anydesk/:callid', TicketsController.updateLoggedTicketAnydesk);
-// router.patch('/updateloggedtype/:type/:callid', TicketsController.updateLoggedTicketType);
-// router.patch('/updateloggedemployee/:employee/:callid', TicketsController.updateLoggedTicketEmployee);
-// router.patch('/updateloggedcomments/:comments/:callid', TicketsController.updateLoggedTicketComments);
-
 //single updateQuery 4 editing tickets
 router.patch('/editloggedticket/:callid', TicketsController.editLoggedTicket);
 router.patch('/editactiveticket/:id', TicketsController.editActiveTicket);
