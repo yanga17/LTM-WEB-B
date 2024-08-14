@@ -15,7 +15,7 @@ router.get('/getactiveusertickets/:employee', TicketsController.getActiveUserTic
 
 //takeBtn in loggedTickets (ticketsModule) - insertTakeCallTicket into tbltime
 router.post('/insertloggedticket', TicketsController.insertLoggedTicket);
-router.patch('/updateloggedticket/:endtime/:callid', TicketsController.updateLoggedTicket);//update takeCallTicket in tblcalls - update - updateCallTicket into tblcalls
+router.patch('/updateloggedticket/:callid', TicketsController.updateLoggedTicket);//update takeCallTicket in tblcalls - update - updateCallTicket into tblcalls
 router.patch('/endticket/:employee/:callid', TicketsController.endActiveTicket); //end activeTicket - update into tbltime
 router.patch('/endticket/:callid', TicketsController.endActiveTicketDetail); //in activeTicketsDetail
 

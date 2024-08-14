@@ -94,7 +94,7 @@ Tickets.insertLoggedTicket = (req, result) => {
 }
 //take button in loggedTickets table
 Tickets.updateLoggedTicket = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = ?, Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.endtime, req.params.callid], (err, res) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = NOW(), Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.callid], (err, res) => {
         if (err) {
             console.log('Error while updating the specific call:' + err);
             result(err, null);
@@ -396,7 +396,7 @@ Tickets.insertStartActiveTicket = (req, result) => {
 }
 
 Tickets.transferTicket = (req, result) => {
-    ltmDbConn.query("INSERT INTO tblcalls (Customer, Problem, Clients_Anydesk, Phone_Number, name, Email_Address, Time, Support_No, Empl, Comments, Priority, IssueType, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), (SELECT Email_Address FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT Priority FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), ?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
+    ltmDbConn.query("INSERT INTO legendtime.tblcalls(Customer, Problem, Clients_Anydesk, Phone_Number, name, Email_Address, Time, Support_No, Empl, Comments, Priority, IssueType, Type, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), (SELECT Email_Address FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT Priority FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), (SELECT Type FROM tbltime WHERE ID = ?),?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
         if (err) {
             console.log('Error while transfering the ticket to the next Employee:' + err);
             result(null, err);
