@@ -94,7 +94,7 @@ Tickets.insertLoggedTicket = (req, result) => {
 }
 //take button in loggedTickets table
 Tickets.updateLoggedTicket = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = ?, Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.endtime, req.params.callid], (err, res) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = NOW(), Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.callid], (err, res) => {
         if (err) {
             console.log('Error while updating the specific call:' + err);
             result(err, null);
@@ -241,10 +241,10 @@ Tickets.updateLoggedTicketComments = (req, result) => {
 
 
 Tickets.editLoggedTicket = (req, result) => {
-    const { customer, problem, number, name, email, anydesk, type, employee, issueType, comments  } = req.body;
+    const { customer, problem, number, name, email, anydesk, type, employee, issueType, priority, comments  } = req.body;
     const callID = req.params.callid;
 
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ?, Problem = ?, Phone_Number = ?, name = ?, Email_Address = ?, Clients_Anydesk = ?, Type = ?, Empl = ?, IssueType = ?,  Comments = ? WHERE Call_ID = ?', [customer, problem, number, name, email, anydesk, type, employee, issueType, comments, callID], (err, res) => {
+    ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ? , Problem = ?, Phone_Number = ?, name = ?, Email_Address = ?, Clients_Anydesk = ?, Type = ?, Empl = ?, IssueType = ?,  Priority = ?, Comments = ? WHERE Call_ID = ?', [customer, problem, number, name, email, anydesk, type, employee, issueType, priority, comments, callID], (err, res) => {
         if (err) {
             console.log('Error while editing the entire logged ticket:' + err);
             result(null, err);
@@ -256,10 +256,10 @@ Tickets.editLoggedTicket = (req, result) => {
 }
 
 Tickets.editActiveTicket = (req, result) => {
-    const { customer, problem, number, name, email, anydesk, type, employee, issueType, comments  } = req.body;
+    const { customer, problem, number, name, email, anydesk, type, employee, issueType, comments, priority  } = req.body;
     const id = req.params.id;
 
-    ltmDbConn.query('UPDATE legendtime.tbltime SET Customer = ?, Activity = ?, Phone_Number = ?, name = ?, Email_Address = ?, Clients_Anydesk = ?, Type = ?, Employee = ?, IssueType = ?,  Comments = ? WHERE ID = ?', [customer, problem, number, name, email, anydesk, type, employee, issueType, comments, id], (err, res) => {
+    ltmDbConn.query('UPDATE legendtime.tbltime SET Customer = ?, Activity = ?, Phone_Number = ?, name = ?, Email_Address = ?, Clients_Anydesk = ?, Type = ?, Employee = ?, IssueType = ?,  Comments = ?, Priority = ? WHERE ID = ?', [customer, problem, number, name, email, anydesk, type, employee, issueType, comments, priority, id], (err, res) => {
         if (err) {
             console.log('Error while editing the entire Active ticket:' + err);
             result(null, err);
@@ -396,7 +396,7 @@ Tickets.insertStartActiveTicket = (req, result) => {
 }
 
 Tickets.transferTicket = (req, result) => {
-    ltmDbConn.query("INSERT INTO tblcalls (Customer, Problem, Clients_Anydesk, Phone_Number, name, Email_Address, Time, Support_No, Empl, Comments, IssueType, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), (SELECT Email_Address FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), ?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
+    ltmDbConn.query("INSERT INTO legendtime.tblcalls(Customer, Problem, Clients_Anydesk, Phone_Number, name, Email_Address, Time, Support_No, Empl, Comments, Priority, IssueType, Type, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), (SELECT Email_Address FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT Priority FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), (SELECT Type FROM tbltime WHERE ID = ?),?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
         if (err) {
             console.log('Error while transfering the ticket to the next Employee:' + err);
             result(null, err);
