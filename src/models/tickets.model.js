@@ -1,4 +1,5 @@
 var ltmDbConn = require('../../config/legendTimeDb.config');
+//const fns = require('date-fns')
 
 var Tickets = function (user) {
     this.callid = user.callid;
@@ -55,18 +56,6 @@ Tickets.getActiveTickets = (result) => {
     })
 }
 
-Tickets.getEachActiveTicket = (req, result) => {
-    ltmDbConn.query('SELECT * FROM legendtime.tbltime WHERE Completed Is Null AND ID = ?', [req.params.callid], (err, res) => {
-        if (!(err === null)) {
-            console.log('Error while getting the specific call:' + err);
-            result(null, err)
-        } else {
-            console.log(res, 'result');
-            result(null, res); 
-        }
-    })
-}
-
 Tickets.getActiveUserTickets = (req, result) => {
     ltmDbConn.query('SELECT ID, Employee, Customer, Activity, Clients_Anydesk, Phone_Number, StartTime, Support_No, Type, Comments, name as Name, Email_Address, Time_Taken, IssueType, Priority FROM legendtime.tbltime WHERE Employee = ? AND ISNULL(EndTime)', [req.params.employee], (err, res) => {
         if (!(err === null)) {
@@ -92,154 +81,169 @@ Tickets.insertLoggedTicket = (req, result) => {
         }
     });
 }
-//take button in loggedTickets table
+
+//take button in loggedTickets table - before changes
+// Tickets.updateLoggedTicket = (req, result) => {
+//     ltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = NOW(), Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.callid], (err, res) => {
+//         if (err) {
+//             console.log('Error while updating the specific call:' + err);
+//             result(err, null);
+//         } else {
+//             console.log('Update successful:', res);
+//             result(null, res);
+//         }
+//     });
+// };
+
+/* UPDATE LOGGED TICKET */
 Tickets.updateLoggedTicket = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = NOW(), Taken = 1, Duration = TIMEDIFF(EndTime, Time) WHERE Call_ID = ?', [req.params.callid], (err, res) => {
+    // Step 1: Retrieve the current start time (Time) from the database for the given Call_ID
+    ltmDbConn.query('SELECT Time FROM legendtime.tblcalls WHERE Call_ID = ?', [req.params.callid], (err, res) => {
         if (err) {
-            console.log('Error while updating the specific call:' + err);
-            result(err, null);
+            console.log('Error while fetching the start time for the logged ticket:' + err);
+            result(err, null);  // Handle error if the query fails
         } else {
-            console.log('Update successful:', res);
-            result(null, res);
+            // Step 2: Parse the start time (Time) from the database and the end time (EndTime) from the request
+            const startTime = new Date(res[0].Time);
+            const endTime = new Date(req.params.endtime);
+
+            // Step 3: Calculate the difference between the start and end times in milliseconds
+            const differenceInMillis = endTime - startTime;
+
+            // Step 4: Convert the difference into total seconds
+            const differenceInSeconds = Math.floor(differenceInMillis / 1000);
+
+            // Step 5: Extract hours, minutes, and seconds from the total difference in seconds
+            const hours = Math.floor(differenceInSeconds / 3600);
+            const minutes = Math.floor((differenceInSeconds % 3600) / 60);
+            const seconds = differenceInSeconds % 60;
+
+            // Step 6: Format the duration as a string in the format "xh ym zs"
+            const duration = `${hours}h ${minutes}m ${seconds}s`;
+
+            // Step 7: Update the EndTime and Duration columns in the database for the given Call_ID
+            ltmDbConn.query('UPDATE legendtime.tblcalls SET EndTime = ?, Duration = ?, Taken = 1 WHERE Call_ID = ?', 
+                [req.params.endtime, duration, req.params.callid], (err, res) => {
+                if (err) {
+                    console.log('Error while updating the endtime for the logged ticket:' + err);
+                    result(err, null);  // Handle error if the update fails
+                } else {
+                    console.log('Update EndTime and Duration for Logged Ticket - Successful:', res);
+                    result(null, res);  // Return the result if the update is successful
+                }
+            });
         }
     });
 };
 
+
+
+//----- ----- ------ End Active Tickets ----- ----- ----- //
+// Tickets.endActiveTicket = (req, result) => {
+//     ltmDbConn.query('UPDATE legendtime.tbltime SET EndTime = CASE WHEN EndTime IS NULL THEN NOW() END, Duration = CASE WHEN Duration IS NULL THEN TIMEDIFF(EndTime, StartTime) END WHERE Employee = ? AND ID = ?', [req.params.employee, req.params.callid], (err, res) => {
+//         if (err) {
+//             console.log('Error while ending the active call:' + err);
+//             result(err, null);
+//         } else {
+//             console.log('Update Successful, Ticket Has Been Completed:', res);
+//             result(null, res);
+//         }
+//     });
+// };
 Tickets.endActiveTicket = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tbltime SET EndTime = CASE WHEN EndTime IS NULL THEN NOW() END, Duration = CASE WHEN Duration IS NULL THEN TIMEDIFF(EndTime, StartTime) END WHERE Employee = ? AND ID = ?', [req.params.employee, req.params.callid], (err, res) => {
+    // Step 1: Retrieve the StartTime from the database for the given Call_ID
+    ltmDbConn.query('SELECT StartTime FROM legendtime.tbltime WHERE ID = ?', [req.params.callid], (err, res) => {
         if (err) {
-            console.log('Error while ending the active call:' + err);
-            result(err, null);
+            console.log('Error while fetching the start time for the active call:' + err);
+            result(err, null); // Handle error if the query fails
         } else {
-            console.log('Update Successful, Ticket Has Been Completed:', res);
-            result(null, res);
+            // Step 2: Parse the StartTime from the database and the EndTime from the request
+            const startTime = new Date(res[0].StartTime);
+            const endTime = new Date(req.params.endtime);
+
+            // Step 3: Calculate the difference between the start and end times in milliseconds
+            const differenceInMillis = endTime - startTime;
+
+            // Step 4: Convert the difference into total seconds
+            const differenceInSeconds = Math.floor(differenceInMillis / 1000);
+
+            // Step 5: Extract hours, minutes, and seconds from the total difference in seconds
+            const hours = Math.floor(differenceInSeconds / 3600);
+            const minutes = Math.floor((differenceInSeconds % 3600) / 60);
+            const seconds = differenceInSeconds % 60;
+
+            // Step 6: Format the duration as a string in the format "xh ym zs"
+            const duration = `${hours}h ${minutes}m ${seconds}s`;
+
+            // Step 7: Update the EndTime and Duration columns in the database for the given Call_ID
+            ltmDbConn.query('UPDATE legendtime.tbltime SET EndTime = ?, Duration = ?, Taken = 1 WHERE ID = ?', 
+                [req.params.endtime, duration, req.params.callid], (err, res) => {
+                if (err) {
+                    console.log('Error while ending the Active Call:' + err);
+                    result(err, null); // Handle error if the update fails
+                } else {
+                    console.log('Update Successful, Active Ticket Has Been Completed:', res);
+                    result(null, res); // Return the result if the update is successful
+                }
+            });
         }
     });
 };
+
+
+// Tickets.endActiveTicketDetail = (req, result) => {
+//     ltmDbConn.query('UPDATE legendtime.tbltime SET EndTime = CASE WHEN EndTime IS NULL THEN NOW() END, Duration = CASE WHEN Duration IS NULL THEN TIMEDIFF(EndTime, StartTime) END WHERE ID = ?', [req.params.callid], (err, res) => {
+//         if (err) {
+//             console.log('Error while ending the active call:' + err);
+//             result(err, null);
+//         } else {
+//             console.log('Update Successful, Ticket Has Been Completed:', res);
+//             result(null, res);
+//         }
+//     });
+// };
 
 Tickets.endActiveTicketDetail = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tbltime SET EndTime = CASE WHEN EndTime IS NULL THEN NOW() END, Duration = CASE WHEN Duration IS NULL THEN TIMEDIFF(EndTime, StartTime) END WHERE ID = ?', [req.params.callid], (err, res) => {
+    // Step 1: Retrieve the StartTime from the database for the given Call_ID
+    ltmDbConn.query('SELECT StartTime FROM legendtime.tbltime WHERE ID = ?', [req.params.callid], (err, res) => {
         if (err) {
-            console.log('Error while ending the active call:' + err);
-            result(err, null);
+            console.log('Error while fetching the start time for the active call:' + err);
+            result(err, null); // Handle error if the query fails
         } else {
-            console.log('Update Successful, Ticket Has Been Completed:', res);
-            result(null, res);
+            // Step 2: Parse the StartTime from the database and the EndTime from the request
+            const startTime = new Date(res[0].StartTime);
+            const endTime = new Date(req.params.endtime);
+
+            // Step 3: Calculate the difference between the start and end times in milliseconds
+            const differenceInMillis = endTime - startTime;
+
+            // Step 4: Convert the difference into total seconds
+            const differenceInSeconds = Math.floor(differenceInMillis / 1000);
+
+            // Step 5: Extract hours, minutes, and seconds from the total difference in seconds
+            const hours = Math.floor(differenceInSeconds / 3600);
+            const minutes = Math.floor((differenceInSeconds % 3600) / 60);
+            const seconds = differenceInSeconds % 60;
+
+            // Step 6: Format the duration as a string in the format "xh ym zs"
+            const duration = `${hours}h ${minutes}m ${seconds}s`;
+
+            // Step 7: Update the EndTime and Duration columns in the database for the given Call_ID
+            ltmDbConn.query('UPDATE legendtime.tbltime SET EndTime = ?, Duration = ?, Taken = 1 WHERE ID = ?', 
+                [req.params.endtime, duration, req.params.callid], (err, res) => {
+                if (err) {
+                    console.log('Error while ending the Active Call:' + err);
+                    result(err, null); // Handle error if the update fails
+                } else {
+                    console.log('Update Successful, Active Ticket Has Been Completed:', res);
+                    result(null, res); // Return the result if the update is successful
+                }
+            });
         }
     });
 };
 
 //----- ----- ------ editTickets ----- ----- ----- //
-Tickets.updateLoggedTicketCustomer = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ? WHERE Call_ID = ?', [req.params.customer, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the Logged Customer field:' + err);
-            result(err, null);
-        } else {
-            console.log('Update Logged Customer Field - Successful:', res);
-            result(null, res);
-        }
-    });
-};
-
-Tickets.updateLoggedTicketProblem = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Problem = ? WHERE Call_ID = ?', [req.params.problem, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the Logged Problem field:' + err);
-            result(err, null);
-        } else {
-            console.log('Update Logged Problem Field - Successful:', res);
-            result(null, res);
-        }
-    });
-};
-
-Tickets.updateLoggedTicketNumber = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Phone_Number = ? WHERE Call_ID = ?', [req.params.number, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the Logged Phone Number field:' + err);
-            result(err, null);
-        } else {
-            console.log('Update Logged Phone Number Field - Successful:', res);
-            result(null, res);
-        }
-    });
-};
-
-
-Tickets.updateLoggedTicketName = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET name = ? WHERE Call_ID = ?', [req.params.name, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the Logged ClientName field:' + err);
-            result(err, null);
-        } else {
-            console.log('Update Logged ClientName Field - Successful:', res);
-            result(null, res);
-        }
-    });
-};
-
-Tickets.updateLoggedTicketAnydesk = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Clients_Anydesk = ? WHERE Call_ID = ?', [req.params.anydesk, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the Logged Anydesk field:' + err);
-            result(err, null);
-        } else {
-            console.log('Update Logged Anydesk Field - Successful:', res);
-            result(null, res);
-        }
-    });
-};
-
-Tickets.updateLoggedTicketType = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Type = ? WHERE Call_ID = ?', [req.params.type, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the Logged Type field:' + err);
-            result(err, null);
-        } else {
-            console.log('Update Logged Type Field - Successful:', res);
-            result(null, res);
-        }
-    });
-};
-
-Tickets.updateLoggedTicketEmployee = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Empl = ? WHERE Call_ID = ?', [req.params.employee, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the Logged Employee field:' + err);
-            result(err, null);
-        } else {
-            console.log('Update Logged Employee Field - Successful:', res);
-            result(null, res);
-        }
-    });
-};
-
-Tickets.updateLoggedTicketPriority = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET urgent = ? WHERE Call_ID = ?', [req.params.urgent, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the Logged Priority field:' + err);
-            result(err, null);
-        } else {
-            console.log('Update Logged Employee Priority - Successful:', res);
-            result(null, res);
-        }
-    });
-};
-
-Tickets.updateLoggedTicketComments = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Comments = ? WHERE Call_ID = ?', [req.params.comments, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the Logged Comments field:' + err);
-            result(err, null);
-        } else {
-            console.log('Update Logged Comments Priority - Successful:', res);
-            result(null, res);
-        }
-    });
-};
-
-
 Tickets.editLoggedTicket = (req, result) => {
     const { customer, problem, number, name, email, anydesk, type, employee, issueType, priority, comments  } = req.body;
     const callID = req.params.callid;
@@ -273,7 +277,7 @@ Tickets.editActiveTicket = (req, result) => {
 
 
 Tickets.getCustomers = (result) => {
-    ltmDbConn.query("SELECT uid, CONCAT(client_name, ',', LEG_num) AS Customer FROM legendtime.clients ORDER BY client_name ASC;", (err, res) => {
+    ltmDbConn.query("SELECT uid, CONCAT(client_name, ',', LEG_num) AS Customer FROM legendtime.clients ORDER BY client_name ASC", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -320,8 +324,8 @@ Tickets.getTypes = (result) => {
 }
 
 Tickets.insertStartCallTicket = (req, result) => {
-    const { customer, problem, phoneNumber, clientsAnydesk, name, email_address, support_no, empl, logger, comments, priority, issueType, type } = req.body;
-    ltmDbConn.query('INSERT into legendtime.tblcalls(Customer, Problem, Time, Phone_Number, Clients_Anydesk, Name, Email_Address, Support_No, Empl, logger, Comments, Priority, IssueType, Type) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, phoneNumber, clientsAnydesk, name, email_address, support_no, empl, logger, comments, priority, issueType, type], (err, res) => {
+    const { customer, problem, time, phoneNumber, clientsAnydesk, name, email_address, support_no, empl, logger, comments, priority, issueType, type } = req.body;
+    ltmDbConn.query('INSERT into legendtime.tblcalls(Customer, Problem, Time, Phone_Number, Clients_Anydesk, Taken, Name, Email_Address, Support_No, Empl, logger, Comments, Priority, IssueType, Type) VALUES (?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, time, phoneNumber, clientsAnydesk, name, email_address, support_no, empl, logger, comments, priority, issueType, type], (err, res) => {
         if (err) {
             console.log('Error while inserting call ticket:' + err);
             result(null, err);
@@ -383,8 +387,8 @@ Tickets.deleteLoggedTicket = (req, result) => {
 
 
 Tickets.insertStartActiveTicket = (req, result) => {
-    const { employee, customer, name, email_address, activity, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType, priority } = req.body;
-    ltmDbConn.query('INSERT into legendtime.tbltime(Employee, Customer, Name,  Email_Address, Activity, StartTime, Type, Support_No, Phone_Number, Clients_Anydesk, Comments, Time_Taken, IssueType, Priority) VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, NOW(), ?, ?)', [employee, customer, name, email_address, activity, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType, priority], (err, res) => {
+    const { employee, customer, name, email_address, activity, startTime, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType, priority } = req.body;
+    ltmDbConn.query('INSERT into legendtime.tbltime(Employee, Customer, Name,  Email_Address, Activity, StartTime, Type, Support_No, Phone_Number, Clients_Anydesk, Comments, Time_Taken, IssueType, Priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)', [employee, customer, name, email_address, activity, startTime, type, supportNumber, phoneNumber, clientsAnydesk, comments, issueType, priority], (err, res) => {
         if (err) {
             console.log('Error while inserting active ticket:' + err);
             result(null, err);
@@ -445,17 +449,17 @@ Tickets.insertFollowUpTicket = (req, result) => {
 }
 
 //editTickets ------------------------
-Tickets.updateLoggedTicketCustomer = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ? WHERE Call_ID = ?', [req.params.customer, req.params.callid], (err, res) => {
-        if (err) {
-            console.log('Error while updating the logged ticket Customer:' + err);
-            result(err, null);
-        } else {
-            console.log('Updating Logged Customer was Successful:', res);
-            result(null, res);
-        }
-    });
-};
+// Tickets.updateLoggedTicketCustomer = (req, result) => {
+//     ltmDbConn.query('UPDATE legendtime.tblcalls SET Customer = ? WHERE Call_ID = ?', [req.params.customer, req.params.callid], (err, res) => {
+//         if (err) {
+//             console.log('Error while updating the logged ticket Customer:' + err);
+//             result(err, null);
+//         } else {
+//             console.log('Updating Logged Customer was Successful:', res);
+//             result(null, res);
+//         }
+//     });
+// };
 
 //TicketSummary
 Tickets.getTaskSummary = (result) => {
@@ -504,6 +508,17 @@ Tickets.getActiveTicketSummary = (result) => {
 
 Tickets.getQueuedTicketSummary = (result) => {
     ltmDbConn.query('SELECT COUNT(*) As QueuedTickets FROM legendtime.tblcalls WHERE Taken = 0', (err, res) => {
+        if (!(err === null)) {
+            console.log('Error while getting user data: ' + err);
+            result(null, err);
+        } else {
+            result(null, res);
+        }
+    })
+}
+
+Tickets.getEmployeesNonLogged = (result) => {
+    ltmDbConn.query('SELECT t.Technician FROM legendtime.tbltechnicians t LEFT JOIN legendtime.tblcalls c ON t.Technician = c.Empl AND DATE(c.Time) = CURRENT_DATE() WHERE c.Empl IS NULL;', (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);

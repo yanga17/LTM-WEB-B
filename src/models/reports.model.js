@@ -36,8 +36,19 @@ Reports.getClientHistoryReport = (req, result) => {
     });
 }
 
+// Reports.getCallTimesReport = (req, result) => {
+//     ltmDbConn.query("SELECT Call_ID, Customer, SUM(Taken) as CallCount, IF(AVG(TIMESTAMPDIFF(MINUTE, time, endtime)) < 60, CONCAT(ROUND(AVG(TIMESTAMPDIFF(MINUTE, time, endtime)), 2), ' Min'), CONCAT(ROUND(AVG(TIMESTAMPDIFF(MINUTE, time, endtime)) / 60, 2), ' Hours')) as 'AverageTime', IF(SUM(TIMESTAMPDIFF(MINUTE, time, endtime)) < 60, CONCAT(ROUND(SUM(TIMESTAMPDIFF(MINUTE, time, endtime)), 2), ' Min'), CONCAT(ROUND(SUM(TIMESTAMPDIFF(MINUTE, time, endtime)) / 60, 2), ' Hours')) as 'TotalHours' FROM legendtime.tblcalls WHERE DATE(Time) BETWEEN ? AND ? GROUP BY Customer ORDER BY CallCount DESC", [req.params.starttime, req.params.endtime], (err, res) => {
+//         if (err) {
+//             console.log('Error while getting the Customer Call Times Report Data:' + err);
+//             result(null, err);
+//         } else {
+//             console.log('Fetching the Customer Call Times Report Data was Successful:', res);
+//             result(null, res);
+//         }
+//     });
+// }
 Reports.getCallTimesReport = (req, result) => {
-    ltmDbConn.query("SELECT Call_ID, Customer, SUM(Taken) as CallCount, IF(AVG(TIMESTAMPDIFF(MINUTE, time, endtime)) < 60, CONCAT(ROUND(AVG(TIMESTAMPDIFF(MINUTE, time, endtime)), 2), ' Min'), CONCAT(ROUND(AVG(TIMESTAMPDIFF(MINUTE, time, endtime)) / 60, 2), ' Hours')) as 'AverageTime', IF(SUM(TIMESTAMPDIFF(MINUTE, time, endtime)) < 60, CONCAT(ROUND(SUM(TIMESTAMPDIFF(MINUTE, time, endtime)), 2), ' Min'), CONCAT(ROUND(SUM(TIMESTAMPDIFF(MINUTE, time, endtime)) / 60, 2), ' Hours')) as 'TotalHours' FROM legendtime.tblcalls WHERE DATE(Time) BETWEEN ? AND ? GROUP BY Customer ORDER BY CallCount DESC", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT Call_ID, Customer, SUM(Taken) AS CallCount, CONCAT(ROUND(AVG(TIMESTAMPDIFF(SECOND, STR_TO_DATE(Time, '%a %b %d %Y %H:%i:%s GMT+%T'), STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s GMT+%T')) / 60.0), 2), ' Min') AS AverageTime, CONCAT(ROUND(AVG(TIMESTAMPDIFF(SECOND, STR_TO_DATE(Time, '%a %b %d %Y %H:%i:%s GMT+%T'), STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s GMT+%T')) / 3600.0), 2), ' Hours') AS TotalHours FROM legendtime.tblcalls WHERE STR_TO_DATE(Time, '%a %b %d %Y %H:%i:%s GMT+%T') BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s GMT+%T') AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s GMT+%T') GROUP BY Call_ID, Customer", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting the Customer Call Times Report Data:' + err);
             result(null, err);
@@ -73,7 +84,7 @@ Reports.getCustomerErrorReport = (req, result) => {
 }
 
 Reports.getEmployeeAvgReport = (req, result) => {
-    ltmDbConn.query("SELECT ID, Employee, COUNT(*) AS EmployeeCount, IF(CAST((AVG(TIME_TO_SEC(Duration))) / 3600 AS DECIMAL(19,2)) < 1, CONCAT(CAST((AVG(TIME_TO_SEC(Duration))) / 60 AS DECIMAL(19,2)), ' Min'), CONCAT(ROUND((CAST((AVG(TIME_TO_SEC(Duration))) / 3600 AS DECIMAL(19,2))), 2), ' Hours')) AS AvgTimePerTicket, SUM(1) AS TotalTickets, MIN(StartTime) AS MinStartTime, MAX(EndTime) AS MaxEndTime, (SELECT COUNT(*) FROM legendtime.tbltime WHERE (Date(StartTime) BETWEEN '2024-06-01 08:00:17' AND '2024-06-18 08:00:00') AND EndTime IS NOT NULL) AS TotalAllEmpTickets FROM legendtime.tbltime WHERE (Date(StartTime) BETWEEN ? AND ?) AND EndTime IS NOT NULL GROUP BY Employee ORDER BY TotalTickets DESC", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT Employee, COUNT(*) AS EmployeeCount, IF(CAST((AVG(TIME_TO_SEC(Duration))) / 3600 AS DECIMAL(19,2)) < 1, CONCAT(CAST((AVG(TIME_TO_SEC(Duration))) / 60 AS DECIMAL(19,2)), ' Min'), CONCAT(ROUND((CAST((AVG(TIME_TO_SEC(Duration))) / 3600 AS DECIMAL(19,2))), 2), ' Hours')) AS AvgTimePerTicket, SUM(1) AS TotalTickets, MIN(StartTime) AS MinStartTime, MAX(EndTime) AS MaxEndTime, (SELECT COUNT(*) FROM legendtime.tbltime WHERE (Date(StartTime) BETWEEN ? AND ?) AND EndTime IS NOT NULL) AS TotalAllEmpTickets FROM legendtime.tbltime WHERE (Date(StartTime) BETWEEN ? AND ?) AND EndTime IS NOT NULL GROUP BY Employee ORDER BY TotalTickets DESC", [req.params.starttime, req.params.endtime, req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting the Employee Average Time Report Data:' + err);
             result(null, err);
@@ -87,10 +98,10 @@ Reports.getEmployeeAvgReport = (req, result) => {
 Reports.getEmployeeTaskReport = (req, result) => {
     ltmDbConn.query("SELECT ID, Employee, Activity, COUNT(Activity) AS TaskCount FROM legendtime.tbltime WHERE StartTime BETWEEN ? AND ? AND IssueType = 'Task' GROUP BY Employee, Activity ORDER BY TaskCount DESC", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
-            console.log('Error while getting the Customer Tasks Report Data:' + err);
+            console.log('Error while getting the Employee Tasks Report Data:' + err);
             result(null, err);
         } else {
-            console.log('Fetching the Customer Tasks Report Data was Successful:', res);
+            console.log('Fetching the Employee Tasks Report Data was Successful:', res);
             result(null, res);
         }
     });

@@ -5,7 +5,6 @@ const ReportsController = require('../controllers/reports.controller');
 
 require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
-
 router.get('/getclienthistorydata/:starttime/:endtime', ReportsController.getClientHistoryReport);
 router.get('/getcalltimesdata/:starttime/:endtime', ReportsController.getCallTimesReport);
 router.get('/getcustomercalldata/:starttime/:endtime', ReportsController.getCustomerCallsReport);

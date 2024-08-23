@@ -32,8 +32,8 @@ DeletedLogs.getDeletedLogs = (result) => {
 } 
 //Employee, Customer, Problem, Client_Name, Phone_Number, Start_Time, SupportNumber, Priority, IssueType, Type, Comments
 DeletedLogs.undoCallTicket = (req, result) => {
-    const { customer, problem, phoneNo, starttime, employee, clientname, Supportnumber, priority, issueType, type, comments } = req.body;
-    ltmDbConn.query('INSERT INTO legendtime.tblcalls (Customer, Problem, Phone_Number, Time, Empl, name, Support_No, Priority, IssueType, Type, Comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, phoneNo, starttime, employee, clientname, Supportnumber, priority, issueType, type, comments], (err, res) => {
+    const { customer, problem, phoneNo, starttime, employee, clientname, taken, supportnumber, priority, issueType, type, comments } = req.body;
+    ltmDbConn.query('INSERT INTO legendtime.tblcalls (Customer, Problem, Phone_Number, Time, Empl, name, Taken, Support_No, Priority, IssueType, Type, Comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [customer, problem, phoneNo, starttime, employee, clientname, taken, supportnumber, priority, issueType, type, comments], (err, res) => {
         if (err) {
             console.log('Error while inserting call ticket:' + err);
             result(null, err);
