@@ -7,7 +7,7 @@ const UserController = require('../controllers/user.controller');
 
 require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
-router.post('/insertauditlog', UserController.InsertAuditLog);
+router.post('/insertauditlog', UserController.InsertAuditLog); //test
 
 router.post('/login', (req, res) => {
   console.log(req.body)
