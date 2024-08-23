@@ -5,21 +5,17 @@ const TicketsController = require('../controllers/tickets.controller');
 
 require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
-//getAll loggedTickets
-router.get('/getickets', TicketsController.getTickets);
-//getAll activeTickets || getEach activeTicket using ID - viewInDetail
-router.get('/getactivetickets', TicketsController.getActiveTickets);
-router.get('/getactivetickets/:callid', TicketsController.getEachActiveTicket);
-router.get('/getactiveusertickets/:employee', TicketsController.getActiveUserTickets);//getActiveTickets for each Employee
 
+router.get('/getickets', TicketsController.getTickets); //getAll loggedTickets
+router.get('/getactivetickets', TicketsController.getActiveTickets); //getAll activeTickets
+router.get('/getactiveusertickets/:employee', TicketsController.getActiveUserTickets); //getActiveTickets for each Employee
 
-//takeBtn in loggedTickets (ticketsModule) - insertTakeCallTicket into tbltime
-router.post('/insertloggedticket', TicketsController.insertLoggedTicket);
-router.patch('/updateloggedticket/:callid', TicketsController.updateLoggedTicket);//update takeCallTicket in tblcalls - update - updateCallTicket into tblcalls
-router.patch('/endticket/:employee/:callid', TicketsController.endActiveTicket); //end activeTicket - update into tbltime
-router.patch('/endticket/:callid', TicketsController.endActiveTicketDetail); //in activeTicketsDetail
+router.post('/insertloggedticket', TicketsController.insertLoggedTicket);//takeBtn in loggedTickets (ticketsModule) - insertTakeCallTicket into tbltime
+router.patch('/updateloggedticket/:endtime/:callid', TicketsController.updateLoggedTicket); //update takeCallTicket in tblcalls - update - updateCallTicket into tblcalls
+router.patch('/endticket/:endtime/:callid', TicketsController.endActiveTicket); //end activeTicket - update into tbltime
+router.patch('/endticketdetail/:endtime/:callid', TicketsController.endActiveTicketDetail); //in activeTicketsDetail
 
-//getAllCustomers, Problems, Employees, Types
+//getAll - Customers, Problems, Employees, Types
 router.get('/getcustomers', TicketsController.getCustomers);
 router.get('/geterrors', TicketsController.getErrors);
 router.get('/getemployees', TicketsController.getEmployees);
@@ -53,5 +49,8 @@ router.get('/geterrosummary', TicketsController.getErrorSummary);
 router.get('/getotalsummary', TicketsController.getTotalSummary);
 router.get('/getactivesummary', TicketsController.getActiveTicketSummary);
 router.get('/getloggedsummary', TicketsController.getQueuedTicketSummary);
+
+//getEmployees who havent logged tickets
+router.get('/getemployeesnonlogged', TicketsController.getEmployeesNonLogged);
 
 module.exports = router;

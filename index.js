@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { sendEmail } = require('./sendEmails')
+const { sendManagerEmail } = require('./sendManagerEmail')
 const { sendSMS } = require('./sendSMS')
 const { handler } = require("./src/controllers/index")
 
@@ -63,6 +64,17 @@ app.post('/send-email', async (req, res) => {
         res.status(500).send('Error sending email');
     }
 })
+
+//test to manually trigger the email
+// app.post('/send-manager-email', async (req, res) => {
+//     try {
+//         await sendManagerEmail();
+//         res.status(200).send("Manager Email sent successfully!");
+//     } catch (error) {
+//         console.error('Error sending manager-email', error);
+//         res.status(500).send('Error sending manager-email');
+//     }
+// })
 
 // app.post('/send-sms', async (req, res) => {
 //     const { clientName, phonenumber } = req.body;
