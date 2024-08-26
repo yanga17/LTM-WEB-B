@@ -24,8 +24,8 @@ var Dashboard = function (user) {
     this.Priority = user.Priority
 };
 
-Dashboard.getEmpTicketSummary = (req, result) => {
-    ltmDbConn.query("SELECT name, SUM(Tasks) AS Tasks, SUM(Errors) AS Errors, SUM(Tasks + Errors) AS Overall, ROUND(AVG(TIMESTAMPDIFF(MINUTE, StartTime, EndTime)), 2) AS AverageTime FROM (SELECT Employee AS name, CASE WHEN IssueType = 'Task' THEN 1 ELSE 0 END AS Tasks, CASE WHEN IssueType = 'Problem' THEN 1 ELSE 0 END AS Errors, StartTime, EndTime FROM legendtime.tbltime WHERE EndTime IS NOT NULL AND StartTime BETWEEN ? AND ? ) AS subquery GROUP BY name", [req.params.starttime, req.params.endtime], (err, res) => {
+Dashboard.getEmpTicketsData = (req, result) => {
+    ltmDbConn.query("SELECT name, SUM(Tasks) AS Tasks, SUM(Errors) AS Errors, SUM(Tasks + Errors) AS Overall, ROUND(AVG(TIMESTAMPDIFF(MINUTE, STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s'), STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s'))), 2) AS AverageTime FROM (SELECT Employee AS name, CASE WHEN IssueType = 'Task' THEN 1 ELSE 0 END AS Tasks, CASE WHEN IssueType = 'Problem' THEN 1 ELSE 0 END AS Errors, StartTime, EndTime FROM legendtime.tbltime WHERE EndTime IS NOT NULL AND STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s') BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s')) AS subquery GROUP BY name", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting tasks summary:' + err);
             result(null, err);
@@ -37,7 +37,7 @@ Dashboard.getEmpTicketSummary = (req, result) => {
 }
 
 Dashboard.getCustomerSummary = (req, result) => {
-    ltmDbConn.query("SELECT Customer, Activity AS Error, COUNT(Activity) AS ErrorCount FROM legendtime.tbltime WHERE EndTime IS NOT NULL AND IssueType = 'Problem' AND Activity IS NOT NULL OR '' AND StartTime >= ?  AND EndTime <= ?  GROUP BY Customer, Activity ORDER BY ErrorCount DESC LIMIT 20", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT Customer, Activity AS Error, COUNT(Activity) AS ErrorCount FROM legendtime.tbltime WHERE EndTime IS NOT NULL AND IssueType = 'Problem' AND Activity IS NOT NULL AND Activity != '' AND STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s') >= STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s') <= STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') GROUP BY Customer, Activity ORDER BY ErrorCount DESC LIMIT 20", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting Customer Data Summary:' + err);
             result(null, err);
@@ -49,7 +49,7 @@ Dashboard.getCustomerSummary = (req, result) => {
 }
 
 Dashboard.getCustomerCallData = (req, result) => {
-    ltmDbConn.query("SELECT Customer, COUNT(Customer) AS CallCount FROM legendtime.tbltime WHERE StartTime >= ? AND EndTime <= ? GROUP BY Customer ORDER BY CallCount DESC LIMIT 20", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT Customer, COUNT(Customer) AS CallCount FROM legendtime.tbltime WHERE STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s') >= STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s') <= STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') GROUP BY Customer ORDER BY CallCount DESC LIMIT 20", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting Customer Data Summary:' + err);
             result(null, err);
@@ -61,12 +61,24 @@ Dashboard.getCustomerCallData = (req, result) => {
 }
 
 Dashboard.getEmployeeTasksData = (req, result) => {
-    ltmDbConn.query("Select Employee, Activity AS Task, COUNT(Activity) As TasksCount From legendtime.tbltime Where StartTime BETWEEN ? AND ? AND IssueType = 'Task' GROUP BY Employee, Activity ORDER BY TasksCount DESC LIMIT 15", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT Employee, Activity AS Task, COUNT(Activity) AS TasksCount FROM legendtime.tbltime WHERE STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s') BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND IssueType = 'Task' GROUP BY Employee, Activity ORDER BY TasksCount DESC LIMIT 15", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting Customer Data Summary:' + err);
             result(null, err);
         } else {
             console.log('Fetching the Customer Data Summary was Successful:', res);
+            result(null, res);
+        }
+    });
+}
+
+Dashboard.getEmployeeWeeklySummary = (req, result) => {
+    ltmDbConn.query("SELECT ID, Employee, SUM(CASE WHEN DAYNAME(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = 'Monday' THEN 1 ELSE 0 END) AS Monday, SUM(CASE WHEN DAYNAME(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = 'Tuesday' THEN 1 ELSE 0 END) AS Tuesday, SUM(CASE WHEN DAYNAME(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = 'Wednesday' THEN 1 ELSE 0 END) AS Wednesday, SUM(CASE WHEN DAYNAME(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = 'Thursday' THEN 1 ELSE 0 END) AS Thursday, SUM(CASE WHEN DAYNAME(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = 'Friday' THEN 1 ELSE 0 END) AS Friday, SUM(CASE WHEN DAYNAME(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = 'Saturday' THEN 1 ELSE 0 END) AS Saturday, SUM(CASE WHEN DAYNAME(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = 'Sunday' THEN 1 ELSE 0 END) AS Sunday, COUNT(*) AS OverallTotal FROM legendtime.tbltime WHERE STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s') BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') GROUP BY Employee ORDER BY Employee ASC", [req.params.starttime, req.params.endtime], (err, res) => {
+        if (err) {
+            console.log('Error while getting the Employee Summary Report Data:' + err);
+            result(null, err);
+        } else {
+            console.log('Fetching the Employee Summary Report was Successful:', res);
             result(null, res);
         }
     });
@@ -130,17 +142,7 @@ Dashboard.getEmployees = (result) => {
     })
 }
 
-Dashboard.getEmployeeWeeklySummary = (req, result) => {
-    ltmDbConn.query("SELECT ID, Employee, SUM(CASE WHEN DAYNAME(EndTime) = 'Monday' THEN 1 ELSE 0 END) AS Monday, SUM(CASE WHEN DAYNAME(EndTime) = 'Tuesday' THEN 1 ELSE 0 END) AS Tuesday, SUM(CASE WHEN DAYNAME(EndTime) = 'Wednesday' THEN 1 ELSE 0 END) AS Wednesday, SUM(CASE WHEN DAYNAME(EndTime) = 'Thursday' THEN 1 ELSE 0 END) AS Thursday, SUM(CASE WHEN DAYNAME(EndTime) = 'Friday' THEN 1 ELSE 0 END) AS Friday, SUM(CASE WHEN DAYNAME(EndTime) = 'Saturday' THEN 1 ELSE 0 END) AS Saturday, SUM(CASE WHEN DAYNAME(EndTime) = 'Sunday' THEN 1 ELSE 0 END) AS Sunday, COUNT(*) AS OverallTotal FROM legendtime.tbltime WHERE EndTime BETWEEN ? AND ? GROUP BY Employee ORDER BY Employee ASC", [req.params.starttime, req.params.endtime], (err, res) => {
-        if (err) {
-            console.log('Error while getting the Employee Summary Report Data:' + err);
-            result(null, err);
-        } else {
-            console.log('Fetching the Employee Summary Report was Successful:', res);
-            result(null, res);
-        }
-    });
-}
+
 
 
 module.exports = Dashboard; 
