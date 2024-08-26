@@ -1,7 +1,7 @@
 const DashboardModel = require('../models/dashboard.model');
 
-exports.getEmpTicketSummary = (req, res) => {
-  DashboardModel.getEmpTicketSummary(req, (err, user) => {
+exports.getEmpTicketsData = (req, res) => {
+  DashboardModel.getEmpTicketsData(req, (err, user) => {
     if (err) {
       user.message = "Failed";
       res.send(err);
@@ -48,6 +48,18 @@ exports.getEmployeeTasksData = (req, res) => {
     user.message = "Success";
     res.send(user);
   })
+}
+
+exports.getEmployeeWeeklySummary = (req, res) => {
+  DashboardModel.getEmployeeWeeklySummary(req, (err, user) => {
+  if (err) {
+    user.message = "Employee Weekly Summary Data - Failed";
+    res.send(err);
+    process.exit(1);
+  }
+  user.message = "Employee Weekly Summary Data - Success";
+  res.send(user);
+})
 }
 
 exports.getClientSummary = (req, res) => {
@@ -110,14 +122,3 @@ exports.getEmployees = (req, res) => {
   })
 }
 
-exports.getEmployeeWeeklySummary = (req, res) => {
-  DashboardModel.getEmployeeWeeklySummary(req, (err, user) => {
-  if (err) {
-    user.message = "Employee Weekly Summary Data - Failed";
-    res.send(err);
-    process.exit(1);
-  }
-  user.message = "Employee Weekly Summary Data - Success";
-  res.send(user);
-})
-}
