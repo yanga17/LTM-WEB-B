@@ -11,7 +11,7 @@ router.get('/getcustomercalldata/:starttime/:endtime', ReportsController.getCust
 router.get('/getcustomererrordata/:starttime/:endtime', ReportsController.getCustomerErrorReport);
 router.get('/getemployeetaskdata/:starttime/:endtime', ReportsController.getEmployeeTaskReport);
 router.get('/getemployeeavgdata/:starttime/:endtime', ReportsController.getEmployeeAvgReport);
-router.get('/getemployeeummarydata/:starttime/:endtime', ReportsController.getEmployeeSummaryReport);
+router.get('/getemployeesummarydata/:starttime/:endtime', ReportsController.getEmployeeSummaryReport);
 
 //getclienthistorydata, getcustomercalldata, getcustomererrordata
 module.exports = router;
