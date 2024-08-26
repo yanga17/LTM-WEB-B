@@ -502,7 +502,7 @@ Tickets.getTaskSummary = (result) => {
 }
 
 Tickets.getErrorSummary = (result) => {
-    ltmDbConn.query("SELECT COUNT(*) AS NumberOfProblems FROM legendtime.tbltime WHERE Completed = '1' AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = 'Problem' AND DATE(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = CURDATE()", (err, res) => {
+    ltmDbConn.query("SELECT SUM(CASE WHEN IssueType = 'Problem' THEN 1 ELSE 0 END) AS NumberOfProblems FROM legendtime.tbltime WHERE EndTime IS NOT NULL AND DATE(STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s')) = CURDATE()", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
