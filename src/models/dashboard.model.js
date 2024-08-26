@@ -97,7 +97,7 @@ Dashboard.getCommonErrors = (result) => {
 
 //CommonTasksGrid
 Dashboard.getCommonTasks = (result) => {
-    ltmDbConn.query("SELECT Problem, COUNT(Problem) AS CommonTasks FROM legendtime.tblcalls where IssueType = 'Task' GROUP BY Problem ORDER BY CommonTasks DESC LIMIT 5", (err, res) => {
+    ltmDbConn.query("SELECT Activity, COUNT(Activity) AS CommonTasks FROM legendtime.tbltime where IssueType = 'Task' GROUP BY Activity ORDER BY CommonTasks DESC LIMIT 5", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
