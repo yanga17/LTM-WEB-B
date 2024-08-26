@@ -368,8 +368,8 @@ exports.getActiveTicketSummary = (req, res) => {
   })
 }
 
-exports.getQueuedTicketSummary = (req, res) => {
-  TicketsModel.getQueuedTicketSummary((err, user) => {
+exports.getLoggedTicketSummary = (req, res) => {
+  TicketsModel.getLoggedTicketSummary((err, user) => {
     if (err) {
       user.message = "Failed";
       res.send(err);
