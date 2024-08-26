@@ -491,7 +491,7 @@ Tickets.insertFollowUpTicket = (req, result) => {
 
 //TicketSummary
 Tickets.getTaskSummary = (result) => {
-    ltmDbConn.query('SELECT COUNT(*) AS NumberOfTasks FROM legendtime.tbltime WHERE Completed = "1" AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = "Task" AND DATE(EndTime) = CURDATE()', (err, res) => {
+    ltmDbConn.query("SELECT COUNT(*) AS NumberOfTasks FROM legendtime.tbltime WHERE Completed = '1' AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = 'Task' AND DATE(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = CURDATE()", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -502,7 +502,7 @@ Tickets.getTaskSummary = (result) => {
 }
 
 Tickets.getErrorSummary = (result) => {
-    ltmDbConn.query('SELECT COUNT(*) AS NumberOfProblems FROM legendtime.tbltime WHERE Completed = "1" AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = "Problem" AND DATE(EndTime) = CURDATE()', (err, res) => {
+    ltmDbConn.query("SELECT COUNT(*) AS NumberOfProblems FROM legendtime.tbltime WHERE Completed = '1' AND EndTime IS NOT NULL AND Duration IS NOT NULL AND IssueType = 'Problem' AND DATE(STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s')) = CURDATE()", (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);
             result(null, err);
@@ -534,7 +534,7 @@ Tickets.getActiveTicketSummary = (result) => {
     })
 }
 
-Tickets.getQueuedTicketSummary = (result) => {
+Tickets.getLoggedTicketSummary = (result) => {
     ltmDbConn.query('SELECT COUNT(*) As QueuedTickets FROM legendtime.tblcalls WHERE Taken = 0', (err, res) => {
         if (!(err === null)) {
             console.log('Error while getting user data: ' + err);

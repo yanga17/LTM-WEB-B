@@ -33,7 +33,6 @@ router.delete('/deleteloggedticket/:callid', TicketsController.deleteLoggedTicke
 //StartActivity insert statement - tbltime
 router.post('/insertactiveticket', TicketsController.insertStartActiveTicket);
 router.post('/transferticket/:employee/:callid', TicketsController.transferTicket);
-// router.patch('/updatetransferedticket/:id', TicketsController.updatetransferedTicket);
 router.patch('/updatetransferedticket/:id', TicketsController.updatetransferedTicket);
 
 //followUp Customers
@@ -49,7 +48,7 @@ router.get('/getasksummary', TicketsController.getTaskSummary);
 router.get('/geterrosummary', TicketsController.getErrorSummary);
 router.get('/getotalsummary', TicketsController.getTotalSummary);
 router.get('/getactivesummary', TicketsController.getActiveTicketSummary);
-router.get('/getloggedsummary', TicketsController.getQueuedTicketSummary);
+router.get('/getloggedsummary', TicketsController.getLoggedTicketSummary);
 
 //getEmployees who havent logged tickets
 router.get('/getemployeesnonlogged', TicketsController.getEmployeesNonLogged);
