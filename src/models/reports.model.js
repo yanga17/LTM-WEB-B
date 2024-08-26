@@ -25,7 +25,7 @@ var Reports = function (user) {
 };
 
 Reports.getClientHistoryReport = (req, result) => {
-    ltmDbConn.query("SELECT ID, Customer, Activity, Support_No, STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s') AS StartTime, STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s') AS EndTime, Duration, Comments, Phone_Number, Solution, IssueType, Phone_Number, Support_No, Employee, Type, name FROM legendtime.tbltime WHERE STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s') BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') ORDER BY Employee, StartTime DESC", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT ID, Customer, Activity, Support_No, StartTime, EndTime, Duration, Comments, Phone_Number, Solution, IssueType, Phone_Number, Support_No, Employee, Type, name FROM legendtime.tbltime WHERE STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s') BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') ORDER BY Employee, StartTime DESC", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting the Customer Calls Report Data:' + err);
             result(null, err);
