@@ -400,7 +400,7 @@ Tickets.insertStartActiveTicket = (req, result) => {
 }
 
 Tickets.transferTicket = (req, result) => {
-    ltmDbConn.query("INSERT INTO legendtime.tblcalls(Customer, Problem, Clients_Anydesk, Phone_Number, name, Email_Address, Time, Support_No, Empl, Comments, Priority, IssueType, Type, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), (SELECT Email_Address FROM tbltime WHERE ID = ?), NOW(), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT Priority FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), (SELECT Type FROM tbltime WHERE ID = ?),?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
+    ltmDbConn.query("INSERT INTO legendtime.tblcalls(Customer, Problem, Clients_Anydesk, Phone_Number, name, Email_Address, Time, Support_No, Empl, Comments, Priority, IssueType, Type, logger) VALUES ((SELECT Customer FROM tbltime WHERE ID = ?), (SELECT Activity FROM tbltime WHERE ID = ?), (SELECT Clients_Anydesk FROM tbltime WHERE ID = ?), (SELECT Phone_Number FROM tbltime WHERE ID = ?), (SELECT name FROM tbltime WHERE ID = ?), (SELECT Email_Address FROM tbltime WHERE ID = ?), (SELECT StartTime FROM tbltime WHERE ID = ?), (SELECT Support_No FROM tbltime WHERE ID = ?), ?, (SELECT Comments FROM tbltime WHERE ID = ?), (SELECT Priority FROM tbltime WHERE ID = ?), (SELECT IssueType FROM tbltime WHERE ID = ?), (SELECT Type FROM tbltime WHERE ID = ?),?)", [req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee, req.params.callid, req.params.callid, req.params.callid, req.params.callid, req.params.employee], (err, res) => {
         if (err) {
             console.log('Error while transfering the ticket to the next Employee:' + err);
             result(null, err);
@@ -412,16 +412,44 @@ Tickets.transferTicket = (req, result) => {
 }
 
 Tickets.updatetransferedTicket = (req, result) => {
-    ltmDbConn.query("UPDATE legendtime.tbltime SET EndTime = NOW(), Duration = TIMEDIFF(NOW(), StartTime) WHERE ID = ?", [req.params.id], (err, res) => {
+    // Step 1: Retrieve the current start time (StartTime) from the database for the given ID
+    ltmDbConn.query('SELECT StartTime FROM legendtime.tbltime WHERE ID = ?', [req.params.id], (err, res) => {
         if (err) {
-            console.log('Updating the Endtime of the selected ticket errored out:' + err);
-            result(null, err);
+            console.log('Error while fetching the start time for the transferred ticket:' + err);
+            result(err, null);  // Handle error if the query fails
         } else {
-            console.log('Updating the Endtime of the selected ticket Successful:', res);
-            result(null, res);
+            // Step 2: Parse the start time (StartTime) from the database
+            const startTime = new Date(res[0].StartTime);
+            const endTime = new Date();  // Use the current time as the end time
+
+            // Step 3: Calculate the difference between the start and end times in milliseconds
+            const differenceInMillis = endTime - startTime;
+
+            // Step 4: Convert the difference into total seconds
+            const differenceInSeconds = Math.floor(differenceInMillis / 1000);
+
+            // Step 5: Extract hours, minutes, and seconds from the total difference in seconds
+            const hours = Math.floor(differenceInSeconds / 3600);
+            const minutes = Math.floor((differenceInSeconds % 3600) / 60);
+            const seconds = differenceInSeconds % 60;
+
+            // Step 6: Format the duration as a string in the format "xh ym zs"
+            const duration = `${hours}h ${minutes}m ${seconds}s`;
+
+            // Step 7: Update the EndTime and Duration columns in the database for the given ID
+            ltmDbConn.query('UPDATE legendtime.tbltime SET EndTime = ?, Duration = ?, Taken = 1 WHERE ID = ?', 
+                [endTime, duration, req.params.id], (err, res) => {
+                if (err) {
+                    console.log('Error while updating the EndTime for the transferred ticket:' + err);
+                    result(err, null);  // Handle error if the update fails
+                } else {
+                    console.log('Update EndTime and Duration for Transferred Ticket - Successful:', res);
+                    result(null, res);  // Return the result if the update is successful
+                }
+            });
         }
     });
-}
+};
 
 Tickets.getFollowUpTicket = (req, result) => {
     ltmDbConn.query('SELECT * FROM legendtime.tbltime WHERE ID = ?', [req.params.id], (err, res) => {
