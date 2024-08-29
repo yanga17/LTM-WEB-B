@@ -73,7 +73,7 @@ Reports.getCustomerCallsReport = (req, result) => {
 
 
 Reports.getCustomerErrorReport = (req, result) => {
-    ltmDbConn.query("SELECT Call_ID, Problem, Customer, COUNT(Problem) AS ErrorCount FROM legendtime.tblcalls WHERE STR_TO_DATE(Time, '%a %b %d %Y %H:%i:%s') BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') GROUP BY Problem ORDER BY ErrorCount DESC", [req.params.starttime, req.params.endtime], (err, res) => {
+    ltmDbConn.query("SELECT ID, Activity, Customer, COUNT(Activity) AS ErrorCount FROM legendtime.tbltime WHERE STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s') BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') GROUP BY Activity ORDER BY ErrorCount DESC", [req.params.starttime, req.params.endtime], (err, res) => {
         if (err) {
             console.log('Error while getting the Customer Error Report Data:' + err);
             result(null, err);
