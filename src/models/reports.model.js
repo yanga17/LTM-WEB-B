@@ -37,16 +37,63 @@ Reports.getClientHistoryReport = (req, result) => {
 }
 
 Reports.getCallTimesReport = (req, result) => {
-    ltmDbConn.query("SELECT Call_ID, Customer, SUM(Taken) AS CallCount, CONCAT(ROUND(AVG(TIMESTAMPDIFF(SECOND, STR_TO_DATE(Time, '%a %b %d %Y %H:%i:%s GMT+%T'), STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s GMT+%T'))) / 60.0, 2), ' Min') AS AverageTime, CONCAT(ROUND(AVG(TIMESTAMPDIFF(SECOND, STR_TO_DATE(Time, '%a %b %d %Y %H:%i:%s GMT+%T'), STR_TO_DATE(EndTime, '%a %b %d %Y %H:%i:%s GMT+%T'))) / 3600.0, 2), ' Hours') AS TotalHours FROM legendtime.tblcalls WHERE STR_TO_DATE(Time, '%a %b %d %Y %H:%i:%s GMT+%T') BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s GMT+%T') AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s GMT+%T') GROUP BY Call_ID, Customer", [req.params.starttime, req.params.endtime], (err, res) => {
-        if (err) {
-            console.log('Error while getting the Customer Call Times Report Data:' + err);
-            result(null, err);
-        } else {
-            console.log('Fetching the Customer Call Times Report Data was Successful:', res);
-            result(null, res);
+    ltmDbConn.query(
+        `SELECT 
+            ID,
+            Customer, 
+            COUNT(*) AS CallCount, 
+            IF(CAST(SUM(TIME_TO_SEC(CONCAT(
+                SUBSTRING_INDEX(Duration, 'h', 1), ':', 
+                SUBSTRING_INDEX(SUBSTRING_INDEX(Duration, 'm', 1), 'h ', -1), ':', 
+                SUBSTRING_INDEX(Duration, 's', 1)
+            ))) / COUNT(*) / 3600 AS DECIMAL(19, 2)) < 1,
+            CONCAT(ROUND(SUM(TIME_TO_SEC(CONCAT(
+                SUBSTRING_INDEX(Duration, 'h', 1), ':', 
+                SUBSTRING_INDEX(SUBSTRING_INDEX(Duration, 'm', 1), 'h ', -1), ':', 
+                SUBSTRING_INDEX(Duration, 's', 1)
+            ))) / COUNT(*) / 60, 2), ' Min'),
+            CONCAT(ROUND(SUM(TIME_TO_SEC(CONCAT(
+                SUBSTRING_INDEX(Duration, 'h', 1), ':', 
+                SUBSTRING_INDEX(SUBSTRING_INDEX(Duration, 'm', 1), 'h ', -1), ':', 
+                SUBSTRING_INDEX(Duration, 's', 1)
+            ))) / COUNT(*) / 3600, 2), ' Hours')) AS AverageTime,
+            CONCAT(
+                FLOOR(SUM(TIME_TO_SEC(CONCAT(
+                    SUBSTRING_INDEX(Duration, 'h', 1), ':', 
+                    SUBSTRING_INDEX(SUBSTRING_INDEX(Duration, 'm', 1), 'h ', -1), ':', 
+                    SUBSTRING_INDEX(Duration, 's', 1)
+                ))) / 3600), 'h ', 
+                FLOOR((SUM(TIME_TO_SEC(CONCAT(
+                    SUBSTRING_INDEX(Duration, 'h', 1), ':', 
+                    SUBSTRING_INDEX(SUBSTRING_INDEX(Duration, 'm', 1), 'h ', -1), ':', 
+                    SUBSTRING_INDEX(Duration, 's', 1)
+                ))) % 3600) / 60), 'm ', 
+                FLOOR(SUM(TIME_TO_SEC(CONCAT(
+                    SUBSTRING_INDEX(Duration, 'h', 1), ':', 
+                    SUBSTRING_INDEX(SUBSTRING_INDEX(Duration, 'm', 1), 'h ', -1), ':', 
+                    SUBSTRING_INDEX(Duration, 's', 1)
+                ))) % 60), 's') AS TotalTime 
+        FROM legendtime.tbltime 
+        WHERE STR_TO_DATE(StartTime, '%a %b %d %Y %H:%i:%s') 
+            BETWEEN STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') 
+            AND STR_TO_DATE(?, '%a %b %d %Y %H:%i:%s') 
+        GROUP BY Customer`,
+        [req.params.starttime, req.params.endtime],
+        (err, res) => {
+            if (err) {
+                console.log('Error while getting the Customer Calls Report Data:', err);
+                result(null, err);
+            } else {
+                console.log('Fetching the Customer Calls Report Data was Successful:', res);
+                result(null, res);
+            }
         }
-    });
-}
+    );
+};
+
+
+
+
 
 // Reports.getCustomerCallsReport = (req, result) => {
 //     ltmDbConn.query("SELECT ID, Customer, Activity, COUNT(Customer) AS CallCount FROM legendtime.tbltime WHERE (StartTime) BETWEEN ? and ? GROUP BY Customer ORDER BY CallCount DESC", [req.params.starttime, req.params.endtime], (err, res) => {
