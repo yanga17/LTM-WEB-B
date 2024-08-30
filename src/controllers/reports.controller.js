@@ -15,13 +15,13 @@ exports.getClientHistoryReport = (req, res) => {
 exports.getCallTimesReport = (req, res) => {
   ReportsModel.getCallTimesReport(req, (err, user) => {
   if (err) {
-    user.message = "Customer Call Times Report Data - Failed";
-    res.send(err);
-    process.exit(1);
+      user.message = "Call Times Report Data - Failed";
+      res.send(err);
+      process.exit(1);
   }
-  user.message = "Customer Call Times Report Data - Success";
-  res.send(user);
-})
+    user.message = "Call Times Report Data - Success";
+    res.send(user);
+  })
 }
 
 exports.getCustomerCallsReport = (req, res) => {
