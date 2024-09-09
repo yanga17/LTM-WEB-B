@@ -70,8 +70,8 @@ Tickets.getActiveUserTickets = (req, result) => {
 
 //take button in loggedTickets table
 Tickets.insertLoggedTicket = (req, result) => {
-    const { employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, support_no, comments, name, email_address, issueType, priority } = req.body;
-    ltmDbConn.query('INSERT INTO legendtime.tbltime (Employee, Customer, Activity, Phone_Number, Clients_Anydesk, StartTime, Type, Support_No, Comments, Name, Email_Address, Time_Taken, IssueType, Priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)', [employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, support_no, comments, name, email_address, issueType, priority], (err, res) => {
+    const { employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, support_no, comments, name, email_address, timeTaken, issueType, priority } = req.body;
+    ltmDbConn.query('INSERT INTO legendtime.tbltime (Employee, Customer, Activity, Phone_Number, Clients_Anydesk, StartTime, Type, Support_No, Comments, Name, Email_Address, Time_Taken, IssueType, Priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [employee, customer, activity, phoneNumber, clientAnydesk, startTime, type, support_no, comments, name, email_address, timeTaken, issueType, priority], (err, res) => {
         if (err) {
             console.log('Error while inserting the logged ticket into ActiveTickets Table:' + err);
             result(null, err);

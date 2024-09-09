@@ -5,7 +5,6 @@ const TicketsController = require('../controllers/tickets.controller');
 
 require('dotenv').config({ path: '.configuration.env' }); // Updated file path
 
-
 router.get('/getickets', TicketsController.getTickets); //getAll loggedTickets
 router.get('/getactivetickets', TicketsController.getActiveTickets); //getAll activeTickets
 router.get('/getactiveusertickets/:employee', TicketsController.getActiveUserTickets); //getActiveTickets for each Employee
@@ -47,7 +46,7 @@ router.patch('/editactiveticket/:id', TicketsController.editActiveTicket);
 router.get('/getasksummary', TicketsController.getTaskSummary);
 router.get('/geterrosummary', TicketsController.getErrorSummary);
 router.get('/getotalsummary', TicketsController.getTotalSummary);
-router.get('/getactivesummary', TicketsController.getActiveTicketSummary);
+router.get('/getactivesummary', TicketsController.getActiveTicketSummary); 
 router.get('/getloggedsummary', TicketsController.getLoggedTicketSummary);
 
 //getEmployees who havent logged tickets
