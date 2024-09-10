@@ -138,7 +138,6 @@ Dashboard.getEmployees = (result) => {
         } else {
             result(null, res);
         }
-
     })
 }
 
