@@ -81,12 +81,12 @@ FollowUps.getActiveFollowUps = (result) => {
 }
 
 FollowUps.endActiveFollowUp = (req, result) => {
-    ltmDbConn.query('UPDATE legendtime.tblfollowedupcustomers SET Completed = "2", FLEndTime = now() WHERE idx = ?', [req.params.idx], (err, res) => {
+    ltmDbConn.query('UPDATE legendtime.tblfollowedupcustomers SET Completed = "2", FLEndTime = ? WHERE idx = ?', [req.params.flendtime, req.params.idx], (err, res) => {
         if (err) {
-            console.log('Error while ending active ticket with a solution:' + err);
+            console.log('Error while ending active follow-up ticket:' + err);
             result(null, err);
         } else {
-            console.log('Ticket Solution updated successfully:', res);
+            console.log('Follow-Up Ticket ended successfully:', res);
             result(null, res);
         }
     });
@@ -104,7 +104,7 @@ FollowUps.getUnresolvedTickets = (result) => {
 }
 
 FollowUps.getUnresolvedTicketsTotal = (result) => {
-    ltmDbConn.query("SELECT COUNT(*) AS FollowUpsTotal FROM legendtime.tbltime WHERE Completed = '1' AND FollowUp = '1' AND IssueType = 'Problem' AND number_of_days IS NOT NULL AND number_of_days != '' AND DATE_ADD(EndTime, INTERVAL number_of_days DAY) < NOW()", (err, res) => {
+    ltmDbConn.query("SELECT COUNT(*) AS FollowUpsTotal FROM legendtime.tbltime WHERE Completed = '1' AND FollowUp = '1' AND IssueType = 'Problem' AND number_of_days IS NOT NULL", (err, res) => {
         if (err) {
             console.log('Error while getting follow-up data: ' + err);
             result(null, err);
