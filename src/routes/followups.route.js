@@ -12,12 +12,11 @@ router.post('/insertfollowup', FollowUpsController.startFollowUp);
 //followUp tbltime update
 router.patch('/updatefollowup/:id', FollowUpsController.updateFollowUp);
 //update tblfollowedupcustomers Table
-router.patch('/endactivefollowup/:idx', FollowUpsController.endActiveFollowUp);
+router.patch('/endactivefollowup/:flendtime/:idx', FollowUpsController.endActiveFollowUp);
 //getActiveFollowUp - followUp x FLEndTime
 router.get(`/getactivefollowup`, FollowUpsController.getActiveFollowUps);
-//endFollow-Up
-router.patch('/endactivefollowup/:idx', FollowUpsController.endActiveFollowUp);
 
+//unresolved follow-up tickets
 router.get('/getunresolvedtickets', FollowUpsController.getUnresolvedTickets);
 router.get('/getunresolvedticketstotal', FollowUpsController.getUnresolvedTicketsTotal);
 router.post('/startunresolvedfollowup/:id', FollowUpsController.startUnresolvedFollowup);
